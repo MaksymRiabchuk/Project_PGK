@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Blueprint/UserWidget.h"
 #include "PGKPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -23,6 +24,11 @@ public:
 
 	/** Constructor */
 	APGKPlayerController();
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> HUDWidgetClass;
+	UPROPERTY()
+	class UUserWidget* HUDWidgetInstance;
 
 protected:
 
