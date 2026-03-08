@@ -16,6 +16,8 @@ class APGKGameMode : public AGameModeBase
 
 public:
 	APGKGameMode();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 };
 
 
