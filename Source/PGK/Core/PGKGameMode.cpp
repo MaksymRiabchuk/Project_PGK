@@ -3,10 +3,12 @@
 #include "PGKGameMode.h"
 
 #include "PGKGameStateBase.h"
+#include "Character/PGKPlayerState.h"
 
 APGKGameMode::APGKGameMode()
 {
 	GameStateClass = APGKGameStateBase::StaticClass();
+	PlayerStateClass = APGKPlayerState::StaticClass();
 }
 
 void APGKGameMode::PostLogin(APlayerController* NewPlayer)
