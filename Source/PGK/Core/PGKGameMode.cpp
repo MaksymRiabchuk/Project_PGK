@@ -17,5 +17,19 @@ void APGKGameMode::PostLogin(APlayerController* NewPlayer)
 
 	RestartPlayer(NewPlayer);
 	UE_LOG(LogTemp, Warning, TEXT("Player Joined"));
-	
+}
+
+void APGKGameMode::RespawnPlayer(AController* Controller)
+{
+	if (Controller)
+	{
+		if (APawn* PawnToDestroy = Controller->GetPawn())
+		{
+			PawnToDestroy->Destroy();
+		}
+
+		RestartPlayer(Controller);
+        
+		UE_LOG(LogTemp, Warning, TEXT("Player respawned!"));
+	}
 }
