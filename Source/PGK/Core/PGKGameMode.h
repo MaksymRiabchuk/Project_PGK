@@ -18,6 +18,7 @@ public:
 	APGKGameMode();
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	void RespawnPlayer(AController* Controller);
 };
 
 
