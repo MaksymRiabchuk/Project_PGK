@@ -6,7 +6,7 @@ void UMainGameInstance::HostGame()
 {
 	UGameplayStatics::OpenLevel(
 		GetWorld(),
-		"Lvl_FirstPerson",
+		"Lvl_Default",
 		true,
 		"listen"
 	);
