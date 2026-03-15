@@ -53,6 +53,19 @@ void APGKPlayerController::BeginPlay()
 		{
 			UE_LOG(LogTemp, Error, TEXT("HUDWidgetClass not specified!"));
 		}
+		if (WBP_Time)
+		{
+			WBP_TimeInstance = CreateWidget<UUserWidget>(this, WBP_Time);
+            
+			if (WBP_TimeInstance)
+			{
+				WBP_TimeInstance->AddToViewport();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("WBP_TimeInstanceClass not specified!"));
+		}
 	}
 	UE_LOG(LogPGK, Display, TEXT("Added HUD"));
 	
