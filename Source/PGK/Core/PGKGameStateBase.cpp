@@ -2,6 +2,11 @@
 
 #include "Net/UnrealNetwork.h"
 
+APGKGameStateBase::APGKGameStateBase()
+{
+	TimeComponent = CreateDefaultSubobject<UPGKTimeComponent>(TEXT("TimeComponent"));
+}
+
 void APGKGameStateBase::GetLifetimeReplicatedProps(
 	TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
