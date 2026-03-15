@@ -31,7 +31,7 @@ class PGK_API APGKPlayerState : public APlayerState
 	float maxOxygenLevel = 100.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Basic stats|Rates")
-	float WaterDecreaseRate = 25.9f; 
+	float WaterDecreaseRate = 0.5f; 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Basic stats|Rates")
 	float HealthDecreaseRate = 0.3f;
