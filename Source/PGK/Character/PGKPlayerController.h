@@ -27,8 +27,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> HUDWidgetClass;
+	TSubclassOf<class UUserWidget> WBP_Time;
 	UPROPERTY()
 	class UUserWidget* HUDWidgetInstance;
+	class UUserWidget* WBP_TimeInstance;
 
 protected:
 
