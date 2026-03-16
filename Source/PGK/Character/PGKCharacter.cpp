@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PGK.h"
+#include "Core/Interfaces/PGKInteractableInterface.h"
 
 APGKCharacter::APGKCharacter()
 {
@@ -117,4 +118,47 @@ void APGKCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+void APGKCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	if (IsLocallyControlled())
+	{
+		GetWorld()->GetTimerManager().SetTimer(InteractCheckTimer, this, &APGKCharacter::CheckForInteractables, 0.1f, true);
+	}
+}
+
+void APGKCharacter::CheckForInteractables()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC || !PC->PlayerCameraManager) return;
+	
+	FVector StartLocation = PC->PlayerCameraManager->GetCameraLocation();
+	FVector ForwardVector = PC->PlayerCameraManager->GetCameraRotation().Vector();
+	FVector EndLocation = StartLocation + (ForwardVector * 250.0f);
+	
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, QueryParams);
+	if (bHit && HitResult.GetActor())
+	{
+		AActor *HitActor = HitResult.GetActor();
+		if (HitActor->Implements<UPGKInteractableInterface>())
+		{
+			CurrentInteractable = HitActor;
+			return;
+		}
+	}
+	
+	CurrentInteractable = nullptr;
+}
+
+void APGKCharacter::TryInteract()
+{
+	if (CurrentInteractable)
+	{
+		IPGKInteractableInterface::Execute_Interact(CurrentInteractable, this);
+	}
 }
