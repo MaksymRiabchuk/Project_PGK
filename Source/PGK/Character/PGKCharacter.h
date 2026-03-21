@@ -77,11 +77,15 @@ protected:
 	virtual void DoJumpEnd();
 
 protected:
-
+	virtual void BeginPlay() override;
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	
-
+	//Timer for Interaction Raycast
+	FTimerHandle InteractCheckTimer;
+	//Func for Interaction Raycast
+	void CheckForInteractables();
+	
 public:
 
 	/** Returns the first person mesh **/
@@ -90,5 +94,18 @@ public:
 	/** Returns first person camera component **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
+	AActor* CurrentInteractable;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
+	FVector InteractHitLocation;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	void OnInteractCheckCompleted();
+
+	UPROPERTY()
+	class UPrimitiveComponent* CurrentHighlightedComponent;
+	
+	void TryInteract();
 };
 
