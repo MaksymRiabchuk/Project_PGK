@@ -81,8 +81,9 @@ protected:
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	
-
+	//Timer for Interaction Raycast
 	FTimerHandle InteractCheckTimer;
+	//Func for Interaction Raycast
 	void CheckForInteractables();
 	
 public:
@@ -95,6 +96,15 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
 	AActor* CurrentInteractable;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Interaction")
+	FVector InteractHitLocation;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
+	void OnInteractCheckCompleted();
+
+	UPROPERTY()
+	class UPrimitiveComponent* CurrentHighlightedComponent;
 	
 	void TryInteract();
 };

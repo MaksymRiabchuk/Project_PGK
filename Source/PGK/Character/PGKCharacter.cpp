@@ -136,23 +136,40 @@ void APGKCharacter::CheckForInteractables()
 	
 	FVector StartLocation = PC->PlayerCameraManager->GetCameraLocation();
 	FVector ForwardVector = PC->PlayerCameraManager->GetCameraRotation().Vector();
-	FVector EndLocation = StartLocation + (ForwardVector * 250.0f);
+	FVector EndLocation = StartLocation + (ForwardVector * 550.0f);
 	
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, QueryParams);
+
+	if (CurrentHighlightedComponent)
+	{
+		CurrentHighlightedComponent->SetRenderCustomDepth(false);
+		CurrentHighlightedComponent = nullptr;
+	}
+	
 	if (bHit && HitResult.GetActor())
 	{
 		AActor *HitActor = HitResult.GetActor();
 		if (HitActor->Implements<UPGKInteractableInterface>())
 		{
 			CurrentInteractable = HitActor;
+			InteractHitLocation = HitResult.ImpactPoint;
+			OnInteractCheckCompleted();
+
+			CurrentHighlightedComponent = HitResult.GetComponent();
+			if (CurrentHighlightedComponent)
+			{
+				CurrentHighlightedComponent->SetRenderCustomDepth(true);
+			}	
+			
 			return;
 		}
 	}
 	
 	CurrentInteractable = nullptr;
+	OnInteractCheckCompleted();
 }
 
 void APGKCharacter::TryInteract()
@@ -162,3 +179,5 @@ void APGKCharacter::TryInteract()
 		IPGKInteractableInterface::Execute_Interact(CurrentInteractable, this);
 	}
 }
+
+
