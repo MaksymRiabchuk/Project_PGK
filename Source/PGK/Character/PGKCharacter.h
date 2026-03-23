@@ -103,9 +103,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction")
 	void OnInteractCheckCompleted();
 
-	UPROPERTY()
-	class UPrimitiveComponent* CurrentHighlightedComponent;
-	
 	void TryInteract();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UPGKInventoryComponent* InventoryComponent;
+
+	FORCEINLINE class UPGKInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 };
 

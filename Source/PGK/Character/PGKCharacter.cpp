@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PGK.h"
 #include "Core/Interfaces/PGKInteractableInterface.h"
+#include "Core/Inventory/PGKInventoryComponent.h"
 
 APGKCharacter::APGKCharacter()
 {
@@ -43,6 +44,9 @@ APGKCharacter::APGKCharacter()
 	// Configure character movement
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 	GetCharacterMovement()->AirControl = 0.5f;
+	
+	InventoryComponent = CreateDefaultSubobject<UPGKInventoryComponent>(TEXT("InventoryComponent"));
+	InventoryComponent->SetIsReplicated(true);
 }
 
 void APGKCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -143,12 +147,6 @@ void APGKCharacter::CheckForInteractables()
 	QueryParams.AddIgnoredActor(this);
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECollisionChannel::ECC_Visibility, QueryParams);
 
-	if (CurrentHighlightedComponent)
-	{
-		CurrentHighlightedComponent->SetRenderCustomDepth(false);
-		CurrentHighlightedComponent = nullptr;
-	}
-	
 	if (bHit && HitResult.GetActor())
 	{
 		AActor *HitActor = HitResult.GetActor();
@@ -158,12 +156,6 @@ void APGKCharacter::CheckForInteractables()
 			InteractHitLocation = HitResult.ImpactPoint;
 			OnInteractCheckCompleted();
 
-			CurrentHighlightedComponent = HitResult.GetComponent();
-			if (CurrentHighlightedComponent)
-			{
-				CurrentHighlightedComponent->SetRenderCustomDepth(true);
-			}	
-			
 			return;
 		}
 	}
