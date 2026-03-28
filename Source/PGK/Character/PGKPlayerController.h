@@ -27,20 +27,31 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> HUDWidgetClass;
+	UPROPERTY()
+	class UUserWidget* HUDWidgetInstance;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> WBP_TimeClass;
 	UPROPERTY()
-	class UUserWidget* HUDWidgetInstance;
-	UPROPERTY()
 	class UUserWidget* WBP_TimeInstance;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UPGKInteractionTextWidget> WBP_InteractionTextClass;
 	UPROPERTY()
 	class UPGKInteractionTextWidget* WBP_InteractionTextInstance;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> WBP_InventoryClass;
+	UPROPERTY()
+	class UUserWidget* WBP_InventoryInstance;
+
 	void ShowInteractionWidget(const FText& InteractText);
 
 	void HideInteractionWidget();
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void ShowInventoryWidget();
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void HideInventoryWidget();
 	
 protected:
 

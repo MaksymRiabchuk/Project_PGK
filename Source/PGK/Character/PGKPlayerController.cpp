@@ -77,6 +77,20 @@ void APGKPlayerController::BeginPlay()
 		{
 			UE_LOG(LogTemp, Error, TEXT("WBP_InteractionTextClass not specified!"));
 		}
+
+		if (WBP_InventoryClass)
+		{
+			WBP_InventoryInstance = CreateWidget<UUserWidget>(this, WBP_InventoryClass);
+			if (WBP_InventoryInstance)
+			{
+				WBP_InventoryInstance->AddToViewport();
+				WBP_InventoryInstance->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("WBP_InventoryClass not specified!"));
+		}
 	}
 	
 }
@@ -139,5 +153,28 @@ void APGKPlayerController::HideInteractionWidget()
 	if (WBP_InteractionTextInstance && WBP_InteractionTextInstance->IsVisible())
 	{
 		WBP_InteractionTextInstance->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void APGKPlayerController::ShowInventoryWidget()
+{
+	if (WBP_InventoryInstance && !WBP_InventoryInstance->IsVisible())
+	{
+		WBP_InventoryInstance->SetVisibility(ESlateVisibility::Visible);
+		FInputModeUIOnly InputModeData;
+		InputModeData.SetWidgetToFocus(WBP_InventoryInstance->TakeWidget());
+		SetInputMode(InputModeData);
+		bShowMouseCursor = true;
+	}
+}
+
+void APGKPlayerController::HideInventoryWidget()
+{
+	if (WBP_InventoryInstance && WBP_InventoryInstance->IsVisible())
+	{
+		WBP_InventoryInstance->SetVisibility(ESlateVisibility::Hidden);
+		FInputModeGameOnly InputModeData;
+		SetInputMode(InputModeData);
+		bShowMouseCursor = false;
 	}
 }

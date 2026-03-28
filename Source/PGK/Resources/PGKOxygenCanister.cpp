@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Resources/PGKIronOre.h"
+#include "Resources/PGKOxygenCanister.h"
 
 // Sets default values
-APGKIronOre::APGKIronOre()
+APGKOxygenCanister::APGKOxygenCanister()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,14 +12,14 @@ APGKIronOre::APGKIronOre()
 }
 
 // Called when the game starts or when spawned
-void APGKIronOre::BeginPlay()
+void APGKOxygenCanister::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void APGKIronOre::Tick(float DeltaTime)
+void APGKOxygenCanister::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

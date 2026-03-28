@@ -46,7 +46,7 @@ APGKCharacter::APGKCharacter()
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 	GetCharacterMovement()->AirControl = 0.5f;
 	
-	InventoryComponent = CreateDefaultSubobject<UPGKInventoryComponent>(TEXT("InventoryComponent"));
+	InventoryComponent = CreateDefaultSubobject<UPGKInventoryComponent>(TEXT("PGK_Inventory"));
 	InventoryComponent->SetIsReplicated(true);
 }
 
@@ -167,7 +167,6 @@ void APGKCharacter::CheckForInteractables()
 				FText InteractionText = IPGKInteractableInterface::Execute_GetInteractText(CurrentInteractable);
 				PC->ShowInteractionWidget(InteractionText);
 				OnInteractCheckCompleted();
-				
 			}
 			return;
 		}
@@ -177,7 +176,6 @@ void APGKCharacter::CheckForInteractables()
 	{
 		CurrentInteractable = nullptr;
 		PC->HideInteractionWidget();
-        
 		OnInteractCheckCompleted();
 	}
 }

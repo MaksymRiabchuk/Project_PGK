@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "Core/PGKPickupItem.h"
 #include "GameFramework/Actor.h"
-#include "PGKIronOre.generated.h"
+#include "PGKOxygenCanister.generated.h"
 
 UCLASS()
-class PGK_API APGKIronOre : public APGKPickupItem
+class PGK_API APGKOxygenCanister : public APGKPickupItem
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	APGKIronOre();
+	APGKOxygenCanister();
 
 protected:
 	// Called when the game starts or when spawned

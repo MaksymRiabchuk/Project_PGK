@@ -23,12 +23,14 @@ struct FPGKInventorySlot
 	}
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PGK_API UPGKInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UPGKInventoryComponent();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -41,6 +43,9 @@ public:
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
 	void Server_AddItem(UPGKItemData* ItemToAdd, int32 Amount);
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory | Events")
+	FOnInventoryUpdated OnInventoryUpdated;
 
 protected:
 	void CheckOverweightDebuff();

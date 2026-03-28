@@ -55,7 +55,8 @@ void UPGKInventoryComponent::Server_AddItem_Implementation(UPGKItemData* ItemToA
     {
         UE_LOG(LogTemp, Warning, TEXT("InventoryFull! %d items were not equipped."), RemainingAmount);
     }
-
+    
+    OnInventoryUpdated.Broadcast();
     CheckOverweightDebuff();
 }
 

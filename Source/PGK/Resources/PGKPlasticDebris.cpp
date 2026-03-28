@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Resources/PGKIronOre.h"
+#include "Resources/PGKPlasticDebris.h"
 
 // Sets default values
-APGKIronOre::APGKIronOre()
+APGKPlasticDebris::APGKPlasticDebris()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,14 +12,14 @@ APGKIronOre::APGKIronOre()
 }
 
 // Called when the game starts or when spawned
-void APGKIronOre::BeginPlay()
+void APGKPlasticDebris::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void APGKIronOre::Tick(float DeltaTime)
+void APGKPlasticDebris::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
