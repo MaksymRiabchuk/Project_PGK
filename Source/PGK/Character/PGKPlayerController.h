@@ -27,11 +27,21 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUserWidget> HUDWidgetClass;
-	TSubclassOf<class UUserWidget> WBP_Time;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> WBP_TimeClass;
 	UPROPERTY()
 	class UUserWidget* HUDWidgetInstance;
+	UPROPERTY()
 	class UUserWidget* WBP_TimeInstance;
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UPGKInteractionTextWidget> WBP_InteractionTextClass;
+	UPROPERTY()
+	class UPGKInteractionTextWidget* WBP_InteractionTextInstance;
 
+	void ShowInteractionWidget(const FText& InteractText);
+
+	void HideInteractionWidget();
+	
 protected:
 
 	/** Input Mapping Contexts */

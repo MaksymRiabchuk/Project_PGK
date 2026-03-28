@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item")
 	int32 Amount = 1;
 
-	virtual FString GetInteractText_Implementation() override;
+	virtual FText GetInteractText_Implementation() override;
 	virtual void Interact_Implementation(class APGKCharacter* InteractorCharacter) override;
 
 };

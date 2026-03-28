@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PGK.h"
+#include "PGKPlayerController.h"
 #include "Core/Interfaces/PGKInteractableInterface.h"
 #include "Core/Inventory/PGKInventoryComponent.h"
 
@@ -142,7 +143,7 @@ void APGKCharacter::BeginPlay()
 
 void APGKCharacter::CheckForInteractables()
 {
-	APlayerController* PC = Cast<APlayerController>(GetController());
+	APGKPlayerController* PC = Cast<APGKPlayerController>(GetController());
 	if (!PC || !PC->PlayerCameraManager) return;
 	
 	FVector StartLocation = PC->PlayerCameraManager->GetCameraLocation();
@@ -159,16 +160,26 @@ void APGKCharacter::CheckForInteractables()
 		AActor *HitActor = HitResult.GetActor();
 		if (HitActor->Implements<UPGKInteractableInterface>())
 		{
-			CurrentInteractable = HitActor;
-			InteractHitLocation = HitResult.ImpactPoint;
-			OnInteractCheckCompleted();
-
+			if (HitActor != CurrentInteractable)
+			{
+				CurrentInteractable = HitActor;
+				InteractHitLocation = HitResult.ImpactPoint;
+				FText InteractionText = IPGKInteractableInterface::Execute_GetInteractText(CurrentInteractable);
+				PC->ShowInteractionWidget(InteractionText);
+				OnInteractCheckCompleted();
+				
+			}
 			return;
 		}
 	}
 	
-	CurrentInteractable = nullptr;
-	OnInteractCheckCompleted();
+	if (CurrentInteractable != nullptr)
+	{
+		CurrentInteractable = nullptr;
+		PC->HideInteractionWidget();
+        
+		OnInteractCheckCompleted();
+	}
 }
 
 void APGKCharacter::TryInteract()

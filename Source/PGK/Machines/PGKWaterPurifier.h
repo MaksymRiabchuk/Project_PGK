@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	APGKWaterPurifier();
 
-	virtual FString GetInteractText_Implementation() override;
+	virtual FText GetInteractText_Implementation() override;
 	virtual void Interact_Implementation(class APGKCharacter* InteractorCharacter) override;
 
 protected:

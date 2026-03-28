@@ -24,9 +24,9 @@ void APGKWaterPurifier::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-FString APGKWaterPurifier::GetInteractText_Implementation()
+FText APGKWaterPurifier::GetInteractText_Implementation()
 {
-	return TEXT("Press E to open");
+	return FText::FromString(TEXT("Press E to pickup"));
 }
 
 void APGKWaterPurifier::Interact_Implementation(APGKCharacter* InteractorCharacter)

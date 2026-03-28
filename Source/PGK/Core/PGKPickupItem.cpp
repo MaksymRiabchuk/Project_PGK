@@ -7,13 +7,15 @@ APGKPickupItem::APGKPickupItem()
 	
 }
 
-FString APGKPickupItem::GetInteractText_Implementation()
+FText APGKPickupItem::GetInteractText_Implementation()
 {
 	if (ItemData)
 	{
-		return FString::Printf(TEXT("Press E to pickup %s"), *ItemData->ItemName.ToString());
+		UE_LOG(LogTemp, Error, TEXT("PickUpItemData!"));		
+		return FText::Format(FText::FromString(TEXT("Press E to pickup {0}")), ItemData->ItemName);
 	}
-	return TEXT("Press E to pickup");
+	UE_LOG(LogTemp, Error, TEXT("PickUp!"));
+	return FText::FromString(TEXT("Press E to pickup"));
 }
 
 void APGKPickupItem::Interact_Implementation(APGKCharacter* InteractorCharacter)

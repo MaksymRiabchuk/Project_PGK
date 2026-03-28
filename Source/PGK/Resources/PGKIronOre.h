@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Core/PGKPickupItem.h"
 #include "Core/Interfaces/PGKInteractableInterface.h"
 #include "GameFramework/Actor.h"
 #include "PGKIronOre.generated.h"
 
 UCLASS()
-class PGK_API APGKIronOre : public AActor, public IPGKInteractableInterface
+class PGK_API APGKIronOre : public APGKPickupItem
 {
 	GENERATED_BODY()
 	
@@ -16,7 +17,6 @@ public:
 	// Sets default values for this actor's properties
 	APGKIronOre();
 
-	virtual FString GetInteractText_Implementation() override;
 	virtual void Interact_Implementation(class APGKCharacter* InteractorCharacter) override;
 
 protected:

@@ -22,7 +22,7 @@ class PGK_API IPGKInteractableInterface
 	
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	FString GetInteractText();
+	FText GetInteractText();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
 	void Interact(class APGKCharacter* InteractorCharacter);

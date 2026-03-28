@@ -25,11 +25,6 @@ void APGKIronOre::Tick(float DeltaTime)
 
 }
 
-FString APGKIronOre::GetInteractText_Implementation()
-{
-	return TEXT("Press E to collect");
-}
-
 void APGKIronOre::Interact_Implementation(APGKCharacter* InteractorCharacter)
 {
 	if (InteractorCharacter)

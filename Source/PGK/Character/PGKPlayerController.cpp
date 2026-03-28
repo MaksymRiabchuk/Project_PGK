@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PGK.h"
 #include "Character/PGKCameraManager.h"
+#include "Widgets/PGKInteractionTextWidget.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
 APGKPlayerController::APGKPlayerController()
@@ -43,7 +44,6 @@ void APGKPlayerController::BeginPlay()
 		if (HUDWidgetClass)
 		{
 			HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
-            
 			if (HUDWidgetInstance)
 			{
 				HUDWidgetInstance->AddToViewport();
@@ -53,10 +53,9 @@ void APGKPlayerController::BeginPlay()
 		{
 			UE_LOG(LogTemp, Error, TEXT("HUDWidgetClass not specified!"));
 		}
-		if (WBP_Time)
+		if (WBP_TimeClass)
 		{
-			WBP_TimeInstance = CreateWidget<UUserWidget>(this, WBP_Time);
-            
+			WBP_TimeInstance = CreateWidget<UUserWidget>(this, WBP_TimeClass);
 			if (WBP_TimeInstance)
 			{
 				WBP_TimeInstance->AddToViewport();
@@ -66,8 +65,19 @@ void APGKPlayerController::BeginPlay()
 		{
 			UE_LOG(LogTemp, Error, TEXT("WBP_TimeInstanceClass not specified!"));
 		}
+		if (WBP_InteractionTextClass)
+		{
+			WBP_InteractionTextInstance = CreateWidget<UPGKInteractionTextWidget>(this, WBP_InteractionTextClass);
+			if (WBP_InteractionTextInstance)
+			{
+				WBP_InteractionTextInstance->AddToViewport();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("WBP_InteractionTextClass not specified!"));
+		}
 	}
-	UE_LOG(LogPGK, Display, TEXT("Added HUD"));
 	
 }
 
@@ -102,4 +112,32 @@ bool APGKPlayerController::ShouldUseTouchControls() const
 {
 	// are we on a mobile platform? Should we force touch?
 	return SVirtualJoystick::ShouldDisplayTouchInterface() || bForceTouchControls;
+}
+
+void APGKPlayerController::ShowInteractionWidget(const FText& InteractText)
+{
+	if (!WBP_InteractionTextInstance && WBP_InteractionTextClass)
+	{
+		WBP_InteractionTextInstance = CreateWidget<UPGKInteractionTextWidget>(this, WBP_InteractionTextClass);
+		if (WBP_InteractionTextInstance)
+		{
+			WBP_InteractionTextInstance->AddToViewport();
+		}
+	}
+
+	if (WBP_InteractionTextInstance)
+	{
+		WBP_InteractionTextInstance->SetVisibility(ESlateVisibility::Visible);
+		
+		WBP_InteractionTextInstance->UpdateText(InteractText);
+		
+	}
+}
+
+void APGKPlayerController::HideInteractionWidget()
+{
+	if (WBP_InteractionTextInstance && WBP_InteractionTextInstance->IsVisible())
+	{
+		WBP_InteractionTextInstance->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
