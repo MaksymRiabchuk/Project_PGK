@@ -127,6 +127,13 @@ void APGKCharacter::DoJumpEnd()
 void APGKCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
 	if (IsLocallyControlled())
 	{
 		GetWorld()->GetTimerManager().SetTimer(InteractCheckTimer, this, &APGKCharacter::CheckForInteractables, 0.1f, true);
