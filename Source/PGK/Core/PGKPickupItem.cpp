@@ -11,7 +11,6 @@ FText APGKPickupItem::GetInteractText_Implementation()
 {
 	if (ItemData)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PickUpItemData!"));		
 		return FText::Format(FText::FromString(TEXT("Press E to pickup {0}")), ItemData->ItemName);
 	}
 	UE_LOG(LogTemp, Error, TEXT("PickUp!"));

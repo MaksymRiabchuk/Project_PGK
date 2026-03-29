@@ -49,6 +49,9 @@ class PGK_API APGKPlayerState : public APlayerState
 	void AddHealth(float Amount);
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Basic stats|Actions")
+	void AddOxygen( float Amount);
+
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Basic stats|Actions")
 	void SetOxygenDecreasing(bool bIsDecreasing);
 
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Basic stats|Actions")

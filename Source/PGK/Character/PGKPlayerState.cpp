@@ -78,6 +78,14 @@ void APGKPlayerState::AddWater(float Amount)
 	}
 }
 
+void APGKPlayerState::AddOxygen(float Amount)
+{
+	if (HasAuthority())
+	{
+		oxygenLevel = FMath::Clamp(oxygenLevel + Amount, 0.f, maxOxygenLevel);
+	}
+}
+
 void APGKPlayerState::SetOxygenDecreasing(bool bIsDecreasing)
 {
 	if (HasAuthority())

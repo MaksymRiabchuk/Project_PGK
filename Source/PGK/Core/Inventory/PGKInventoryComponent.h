@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PGKConsumableItemData.h"
 #include "Components/ActorComponent.h"
 #include "PGKItemData.h"
 #include "PGKInventoryComponent.generated.h"
@@ -43,6 +44,9 @@ public:
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
 	void Server_AddItem(UPGKItemData* ItemToAdd, int32 Amount);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
+	void Server_ConsumeItem(UPGKConsumableItemData* ItemToAdd, int32 Amount);
 
 	UPROPERTY(BlueprintAssignable, Category = "Inventory | Events")
 	FOnInventoryUpdated OnInventoryUpdated;

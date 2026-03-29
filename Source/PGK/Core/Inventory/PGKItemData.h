@@ -11,6 +11,7 @@ enum class EItemType : uint8
 	Tool     UMETA(DisplayName = "Equipment"),
 	Food     UMETA(DisplayName = "Food"),
 	Water     UMETA(DisplayName = "Water"),
+	Oxygen     UMETA(DisplayName = "Oxygen"),
 };
 
 UCLASS(BlueprintType)

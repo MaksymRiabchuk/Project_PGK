@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Resources/PGKEmptyPlasticBottle.h"
+#include "Resources/Food/PGKSeaweed.h"
 
 // Sets default values
-APGKEmptyPlasticBottle::APGKEmptyPlasticBottle()
+APGKSeaweed::APGKSeaweed()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,14 +12,14 @@ APGKEmptyPlasticBottle::APGKEmptyPlasticBottle()
 }
 
 // Called when the game starts or when spawned
-void APGKEmptyPlasticBottle::BeginPlay()
+void APGKSeaweed::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void APGKEmptyPlasticBottle::Tick(float DeltaTime)
+void APGKSeaweed::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
