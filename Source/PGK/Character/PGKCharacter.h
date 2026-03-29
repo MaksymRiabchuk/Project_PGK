@@ -81,6 +81,7 @@ protected:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	/** Set up input action bindings */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	
@@ -123,5 +124,7 @@ public:
 protected:
 	UFUNCTION(Server, Reliable)
 	void Server_Interact(AActor* InteractableActor);
+	
+	virtual void PawnClientRestart() override;
 };
 

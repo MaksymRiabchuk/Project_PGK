@@ -57,12 +57,19 @@ class PGK_API APGKPlayerState : public APlayerState
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Basic stats|Actions")
 	void ResetPlayerStats();
 
+	void EnterBase();
+    
+	void LeaveBase();
+
 	APGKPlayerState();
+	
 
 protected:
 	FTimerHandle PlayerStatsTimerHandle;
 	
-	bool bIsOxygenDecreasing = false;
+	bool bIsOxygenDecreasing = true;
 
 	void UpdatePlayerStats();
+
+	int32 BaseOverlapCount = 0;
 };

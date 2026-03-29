@@ -63,8 +63,8 @@ void APGKGlobalWater::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 		if (OverlappedCharacter->IsLocallyControlled())
 		{
 			UnderwaterPostProcess->BlendWeight = 1.0f;
+			LocalPlayerInWater = OverlappedCharacter; 
 		}
-
 		if (HasAuthority())
 		{
 			if (APGKPlayerState* PS = OverlappedCharacter->GetPlayerState<APGKPlayerState>())
@@ -79,17 +79,10 @@ void APGKGlobalWater::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	if (ACharacter* OverlappedCharacter = Cast<ACharacter>(OtherActor))
 	{
-		if (OverlappedCharacter->IsLocallyControlled())
+		if (OverlappedCharacter == LocalPlayerInWater)
 		{
 			UnderwaterPostProcess->BlendWeight = 0.0f;
-		}
-
-		if (HasAuthority())
-		{
-			if (APGKPlayerState* PS = OverlappedCharacter->GetPlayerState<APGKPlayerState>())
-			{
-				PS->SetOxygenDecreasing(false);
-			}
+			LocalPlayerInWater = nullptr;
 		}
 	}
 }

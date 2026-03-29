@@ -72,6 +72,14 @@ void APGKCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	{
 		UE_LOG(LogPGK, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
 }
 
 
@@ -130,13 +138,6 @@ void APGKCharacter::DoJumpEnd()
 void APGKCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		}
-	}
 	if (IsLocallyControlled())
 	{
 		GetWorld()->GetTimerManager().SetTimer(InteractCheckTimer, this, &APGKCharacter::CheckForInteractables, 0.1f, true);
@@ -200,3 +201,15 @@ void APGKCharacter::TryInteract()
 	}
 }
 
+void APGKCharacter::PawnClientRestart()
+{
+	Super::PawnClientRestart();
+    
+	GetWorld()->GetTimerManager().SetTimer(InteractCheckTimer, this, &APGKCharacter::CheckForInteractables, 0.1f, true);
+}
+
+void APGKCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearTimer(InteractCheckTimer);
+	Super::EndPlay(EndPlayReason);
+}

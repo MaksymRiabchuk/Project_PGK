@@ -38,5 +38,8 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
-
+	
+private:
+	UPROPERTY()
+	ACharacter* LocalPlayerInWater = nullptr;
 };

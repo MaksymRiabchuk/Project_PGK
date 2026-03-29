@@ -1,6 +1,5 @@
 #include "Character/PGKPlayerState.h"
 
-#include "PGK.h"
 #include "PGKPlayerController.h"
 #include "Core/PGKGameMode.h"
 #include "Net/UnrealNetwork.h"
@@ -31,7 +30,6 @@ void APGKPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void APGKPlayerState::UpdatePlayerStats()
 {
-	//PlayerStatsTimerRefreshRate
 	float DeltaTime = 0.1f;
 
 	waterLevel = FMath::Clamp(waterLevel - (WaterDecreaseRate * DeltaTime), 0.f, maxWaterLevel);
@@ -101,5 +99,35 @@ void APGKPlayerState::ResetPlayerStats()
 		waterLevel = maxWaterLevel;
 		healthLevel = maxHealthLevel;
 		oxygenLevel = maxOxygenLevel;
+	}
+}
+
+void APGKPlayerState::EnterBase()
+{
+	UE_LOG(LogTemp, Warning, TEXT("EnterVase"));
+	if (HasAuthority())
+	{
+		BaseOverlapCount++;
+		if (BaseOverlapCount > 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Base Overlap Count: %d"), BaseOverlapCount);
+			SetOxygenDecreasing(false);
+		} 
+	}
+}
+
+void APGKPlayerState::LeaveBase()
+{
+	if (HasAuthority())
+	{
+		BaseOverlapCount--;
+		if (BaseOverlapCount < 0) 
+		{
+			BaseOverlapCount = 0;
+		}
+		if (BaseOverlapCount == 0) 
+		{
+			SetOxygenDecreasing(true);
+		}
 	}
 }
