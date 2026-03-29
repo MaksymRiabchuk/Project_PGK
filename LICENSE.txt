@@ -1,0 +1,7 @@
+Copyright (c) 2026 Maksym Riabchuk, Andrii Diachuk
+
+Code License:
+The source code (.cpp, .h files) is licensed under the MIT License.
+
+Asset License:
+All 3D models, textures, audio files, and level designs (.uasset, .umap files) are strictly ALL RIGHTS RESERVED. You may not use, copy, or distribute these assets under any circumstances.
