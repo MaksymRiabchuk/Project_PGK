@@ -72,7 +72,10 @@ void UPGKInventoryComponent::Server_ConsumeItem_Implementation(UPGKConsumableIte
         ItemToConsume->UseItem(OwnerCharacter);
     }
 
-    OnInventoryUpdated.Broadcast();
+    if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
+    {
+        OnRep_InventorySlots();
+    }
     CheckOverweightDebuff();
 }
 
@@ -117,7 +120,10 @@ void UPGKInventoryComponent::Server_AddItem_Implementation(UPGKItemData* ItemToA
         UE_LOG(LogTemp, Warning, TEXT("InventoryFull! %d items were not equipped."), RemainingAmount);
     }
     
-    OnInventoryUpdated.Broadcast();
+    if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
+    {
+        OnRep_InventorySlots();
+    }
     CheckOverweightDebuff();
 }
 
@@ -197,7 +203,12 @@ void UPGKInventoryComponent::ConsumeRecipeItems(const TArray<FPGKCraftingRequire
     }
     if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
     {
-        OnInventoryUpdated.Broadcast();
-        CheckOverweightDebuff(); 
+        OnRep_InventorySlots();
     }
+    CheckOverweightDebuff(); 
+}
+
+void UPGKInventoryComponent::OnRep_InventorySlots()
+{
+    OnInventoryUpdated.Broadcast();
 }

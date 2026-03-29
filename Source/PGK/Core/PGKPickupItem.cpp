@@ -4,7 +4,7 @@
 
 APGKPickupItem::APGKPickupItem()
 {
-	
+	bReplicates = true;
 }
 
 FText APGKPickupItem::GetInteractText_Implementation()
@@ -21,7 +21,7 @@ void APGKPickupItem::Interact_Implementation(APGKCharacter* InteractorCharacter)
 {
 	if (InteractorCharacter && ItemData)
 	{
-		UPGKInventoryComponent* InvComp = InteractorCharacter->FindComponentByClass<UPGKInventoryComponent>();
+		UPGKInventoryComponent* InvComp = InteractorCharacter->GetInventoryComponent();
         
 		if (InvComp)
 		{

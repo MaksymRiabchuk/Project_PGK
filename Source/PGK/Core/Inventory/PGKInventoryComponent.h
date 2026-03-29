@@ -37,8 +37,11 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Inventory")
+	UPROPERTY(ReplicatedUsing = OnRep_InventorySlots, BlueprintReadOnly, Category = "Inventory")
 	TArray<FPGKInventorySlot> InventorySlots;
+
+	UFUNCTION()
+	void OnRep_InventorySlots();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 MaxInventorySize = 20;

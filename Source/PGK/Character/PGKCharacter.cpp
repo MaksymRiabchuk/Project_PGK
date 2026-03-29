@@ -182,12 +182,21 @@ void APGKCharacter::CheckForInteractables()
 	}
 }
 
+void APGKCharacter::Server_Interact_Implementation(AActor* InteractableActor)
+{
+	if (!InteractableActor) return;
+
+	if (InteractableActor->Implements<UPGKInteractableInterface>())
+	{
+		IPGKInteractableInterface::Execute_Interact(InteractableActor, this);
+	}
+}
+
 void APGKCharacter::TryInteract()
 {
 	if (CurrentInteractable)
 	{
-		IPGKInteractableInterface::Execute_Interact(CurrentInteractable, this);
+		Server_Interact(CurrentInteractable);
 	}
 }
-
 

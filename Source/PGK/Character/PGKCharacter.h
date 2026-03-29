@@ -120,5 +120,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Components|Building")
 	FORCEINLINE class UPGKBuildingComponent* GetBuildingComponent() const { return BuildingComponent; }
+protected:
+	UFUNCTION(Server, Reliable)
+	void Server_Interact(AActor* InteractableActor);
 };
 
