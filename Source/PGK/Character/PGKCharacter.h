@@ -114,5 +114,11 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Components|Inventory")
 	FORCEINLINE class UPGKInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UPGKBuildingComponent* BuildingComponent;
+
+	UFUNCTION(BlueprintPure, Category = "Components|Building")
+	FORCEINLINE class UPGKBuildingComponent* GetBuildingComponent() const { return BuildingComponent; }
 };
 

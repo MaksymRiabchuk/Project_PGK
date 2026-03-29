@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PGK.h"
 #include "PGKPlayerController.h"
+#include "Core/PGKBuildingComponent.h"
 #include "Core/Interfaces/PGKInteractableInterface.h"
 #include "Core/Inventory/PGKInventoryComponent.h"
 
@@ -48,6 +49,7 @@ APGKCharacter::APGKCharacter()
 	
 	InventoryComponent = CreateDefaultSubobject<UPGKInventoryComponent>(TEXT("PGK_Inventory"));
 	InventoryComponent->SetIsReplicated(true);
+	BuildingComponent = CreateDefaultSubobject<UPGKBuildingComponent>(TEXT("BuilderComponent"));
 }
 
 void APGKCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

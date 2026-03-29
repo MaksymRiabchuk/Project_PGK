@@ -140,3 +140,64 @@ void UPGKInventoryComponent::CheckOverweightDebuff()
         MovementComp->MaxWalkSpeed = 600.0f; 
     }
 }
+
+bool UPGKInventoryComponent::HasRecipeItems(const TArray<FPGKCraftingRequirement>& Recipe) const
+{
+    for (const FPGKCraftingRequirement& Req : Recipe)
+    {
+        if (!Req.RequiredItem || Req.Amount <= 0) continue;
+        int32 TotalFound = 0;
+        for (const FPGKInventorySlot& Slot : InventorySlots)
+        {
+            if (Slot.ItemData == Req.RequiredItem)
+            {
+                TotalFound += Slot.Quantity;
+            }
+        }
+        if (TotalFound < Req.Amount)
+        {
+            return false;
+        }
+    }
+    return true; 
+}
+
+void UPGKInventoryComponent::ConsumeRecipeItems(const TArray<FPGKCraftingRequirement>& Recipe)
+{
+    if (!HasRecipeItems(Recipe)) return;
+    for (const FPGKCraftingRequirement& Req : Recipe)
+    {
+        if (!Req.RequiredItem || Req.Amount <= 0) continue;
+        int32 RemainingToRemove = Req.Amount;
+        for (int32 i = InventorySlots.Num() - 1; i >= 0; --i)
+        {
+            if (InventorySlots[i].ItemData == Req.RequiredItem)
+            {
+                if (InventorySlots[i].Quantity >= RemainingToRemove)
+                {
+                    InventorySlots[i].Quantity -= RemainingToRemove;
+                    RemainingToRemove = 0;
+                }
+                else
+                {
+                    RemainingToRemove -= InventorySlots[i].Quantity;
+                    InventorySlots[i].Quantity = 0;
+                }
+                if (InventorySlots[i].Quantity <= 0)
+                {
+                    InventorySlots.RemoveAt(i);
+                }
+
+                if (RemainingToRemove <= 0)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
+    {
+        OnInventoryUpdated.Broadcast();
+        CheckOverweightDebuff(); 
+    }
+}

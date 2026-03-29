@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "PGKConsumableItemData.h"
 #include "Components/ActorComponent.h"
+#include "Core/Types/PGKBuildingData.h"
 #include "PGKItemData.h"
 #include "PGKInventoryComponent.generated.h"
 
@@ -50,6 +51,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Inventory | Events")
 	FOnInventoryUpdated OnInventoryUpdated;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory | Crafting")
+	bool HasRecipeItems(const TArray<struct FPGKCraftingRequirement>& Recipe) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory | Crafting")
+	void ConsumeRecipeItems(const TArray<struct FPGKCraftingRequirement>& Recipe);
 
 protected:
 	void CheckOverweightDebuff();
