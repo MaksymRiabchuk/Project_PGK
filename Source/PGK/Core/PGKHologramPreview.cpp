@@ -41,15 +41,12 @@ void APGKHologramPreview::BeginPlay()
 			UpdateHologramState(true);
 		}
 	}
-	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &APGKHologramPreview::OnOverlapBegin);
-	CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &APGKHologramPreview::OnOverlapEnd);	
 }
 
 // Called every frame
 void APGKHologramPreview::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void APGKHologramPreview::UpdateHologramState(bool bCanPlace)
@@ -64,25 +61,18 @@ void APGKHologramPreview::UpdateHologramState(bool bCanPlace)
     }
 }
 
-void APGKHologramPreview::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+bool APGKHologramPreview::HasAnyOverlaps() const
 {
-    if (OtherActor && OtherActor != this && OtherActor != GetOwner())
-    {
-        OverlappingBlockingActors++;
-        UpdateHologramState(false);
-    }
-}
+	if (!CollisionComponent) return false;
+	TArray<AActor*> OverlappingActors;
+	CollisionComponent->GetOverlappingActors(OverlappingActors);
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (Actor && Actor != this && Actor != GetOwner())
+		{
+			return true;
+		}
+	}
 
-void APGKHologramPreview::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-    if (OtherActor && OtherActor != this && OtherActor != GetOwner())
-    {
-        OverlappingBlockingActors--;
-        
-        if (OverlappingBlockingActors <= 0)
-        {
-            OverlappingBlockingActors = 0;
-            UpdateHologramState(true);
-        }
-    }
+	return false;
 }

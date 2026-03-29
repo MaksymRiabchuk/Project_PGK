@@ -37,6 +37,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building")
 	float BuildRange = 600.0f;
 
+	UFUNCTION(BlueprintCallable, Category = "Building")
+	void RotateHologram(float Direction);
 private:
 	UPROPERTY()
 	UPGKBuildingData* CurrentBuildingData;
@@ -46,4 +48,6 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void Server_ConstructBuilding(UPGKBuildingData* BuildingData, FVector Location, FRotator Rotation);
+
+	float CurrentHologramYaw = 0.0f;
 };

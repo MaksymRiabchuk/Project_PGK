@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Core/PGKBuildingComponent.h"
 #include "Core/Inventory/PGKInventoryComponent.h"
@@ -10,7 +8,6 @@
 
 UPGKBuildingComponent::UPGKBuildingComponent()
 {
-    // Нам потрібен Tick, щоб голограма літала за камерою
     PrimaryComponentTick.bCanEverTick = true; 
 }
 
@@ -26,6 +23,12 @@ void UPGKBuildingComponent::StartBuilding(UPGKBuildingData* BuildingData)
     StopBuilding();
 
     CurrentBuildingData = BuildingData;
+
+    if (APGKCharacter* Character = Cast<APGKCharacter>(GetOwner()))
+    {
+        float InitialYaw = Character->GetActorRotation().Yaw;
+        CurrentHologramYaw = FMath::GridSnap(InitialYaw, 45.0f);
+    }
     
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -65,38 +68,24 @@ void UPGKBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
     if (bHit)
     {
-        // 1. СЕТКА (GRID SNAPPING)
-        float GridSize = 50.0f; // Розмір клітинки сітки (можна винести в змінну)
+        float GridSize = 50.0f;
         
         FVector SnappedLocation;
         SnappedLocation.X = FMath::GridSnap(HitResult.ImpactPoint.X, GridSize);
         SnappedLocation.Y = FMath::GridSnap(HitResult.ImpactPoint.Y, GridSize);
         
-        // Z ми також снапимо, щоб об'єкти на різних поверхах стояли рівно
         SnappedLocation.Z = FMath::GridSnap(HitResult.ImpactPoint.Z, GridSize);
 
-        // 2. ВИПРАВЛЕННЯ ВИСОТИ (Z-OFFSET)
-        // Додаємо офсет, щоб підняти півот над землею
         SnappedLocation.Z += CurrentBuildingData->ZOffset;
+        FRotator TargetRotation = FRotator(0.0f, CurrentHologramYaw, 0.0f);
 
-        // 3. ФІКСОВАНА РОТАЦІЯ (Тільки Yaw)
-        // Об'єкт завжди стоїть вертикально, поворот залежить тільки від погляду гравця
-        FRotator TargetRotation = FRotator(0.0f, Character->GetActorRotation().Yaw, 0.0f);
-
-        // Застосовуємо трансформацію до голограми
         CurrentHologram->SetActorLocationAndRotation(SnappedLocation, TargetRotation);
-
-        // 4. ПЕРЕВІРКА ВАЛІДНОСТІ
-        // Не дозволяємо будувати на стінах (тільки на горизонтальних поверхнях)
         bool bIsSurfaceHorizontal = HitResult.ImpactNormal.Z > 0.7f;
-        
-        // Оновлюємо стан (червоний/зелений)
-        bool bCanBuild = bIsSurfaceHorizontal && (CurrentHologram->IsPlacementValid());
+        bool bCanBuild = bIsSurfaceHorizontal && !CurrentHologram->HasAnyOverlaps();
         CurrentHologram->UpdateHologramState(bCanBuild);
     }
     else
     {
-        // Якщо дивимося в небо - не показуємо або робимо червоною на відстані
         CurrentHologram->UpdateHologramState(false);
     }
 }
@@ -134,4 +123,18 @@ void UPGKBuildingComponent::Server_ConstructBuilding_Implementation(UPGKBuilding
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
     
     GetWorld()->SpawnActor<AActor>(BuildingData->ConstructedClass, Location, Rotation, SpawnParams);
+}
+
+void UPGKBuildingComponent::RotateHologram(float Direction)
+{
+    if (Direction == 0.0f || !CurrentHologram) return;
+
+    float Sign = FMath::Sign(Direction);
+    CurrentHologramYaw += Sign * 45.0f;
+
+    CurrentHologramYaw = FMath::Fmod(CurrentHologramYaw, 360.0f);
+    if (CurrentHologramYaw < 0.0f)
+    {
+        CurrentHologramYaw += 360.0f;
+    }
 }
