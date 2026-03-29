@@ -1,9 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+#include "Machines/PGKBase.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "Machines/PGKBase.h"
-
 #include "Character/PGKCharacter.h"
 #include "Character/PGKPlayerState.h"
 
