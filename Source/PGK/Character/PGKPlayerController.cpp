@@ -39,59 +39,7 @@ void APGKPlayerController::BeginPlay()
 	SetInputMode(InputModeData);
 	bShowMouseCursor = false;
 
-	if (IsLocalPlayerController())
-	{
-		if (HUDWidgetClass)
-		{
-			HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
-			if (HUDWidgetInstance)
-			{
-				HUDWidgetInstance->AddToViewport();
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("HUDWidgetClass not specified!"));
-		}
-		if (WBP_TimeClass)
-		{
-			WBP_TimeInstance = CreateWidget<UUserWidget>(this, WBP_TimeClass);
-			if (WBP_TimeInstance)
-			{
-				WBP_TimeInstance->AddToViewport();
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("WBP_TimeInstanceClass not specified!"));
-		}
-		if (WBP_InteractionTextClass)
-		{
-			WBP_InteractionTextInstance = CreateWidget<UPGKInteractionTextWidget>(this, WBP_InteractionTextClass);
-			if (WBP_InteractionTextInstance)
-			{
-				WBP_InteractionTextInstance->AddToViewport();
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("WBP_InteractionTextClass not specified!"));
-		}
-
-		if (WBP_InventoryClass)
-		{
-			WBP_InventoryInstance = CreateWidget<UUserWidget>(this, WBP_InventoryClass);
-			if (WBP_InventoryInstance)
-			{
-				WBP_InventoryInstance->AddToViewport();
-				WBP_InventoryInstance->SetVisibility(ESlateVisibility::Hidden);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("WBP_InventoryClass not specified!"));
-		}
-	}
+	RefreshUIBindings();
 	
 }
 
@@ -176,5 +124,62 @@ void APGKPlayerController::HideInventoryWidget()
 		FInputModeGameOnly InputModeData;
 		SetInputMode(InputModeData);
 		bShowMouseCursor = false;
+	}
+}
+
+void APGKPlayerController::RefreshUIBindings()
+{
+	if (IsLocalPlayerController())
+	{
+		if (HUDWidgetClass)
+		{
+			HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+			if (HUDWidgetInstance)
+			{
+				HUDWidgetInstance->AddToViewport();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("HUDWidgetClass not specified!"));
+		}
+		if (WBP_TimeClass)
+		{
+			WBP_TimeInstance = CreateWidget<UUserWidget>(this, WBP_TimeClass);
+			if (WBP_TimeInstance)
+			{
+				WBP_TimeInstance->AddToViewport();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("WBP_TimeInstanceClass not specified!"));
+		}
+		if (WBP_InteractionTextClass)
+		{
+			WBP_InteractionTextInstance = CreateWidget<UPGKInteractionTextWidget>(this, WBP_InteractionTextClass);
+			if (WBP_InteractionTextInstance)
+			{
+				WBP_InteractionTextInstance->AddToViewport();
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("WBP_InteractionTextClass not specified!"));
+		}
+
+		if (WBP_InventoryClass)
+		{
+			WBP_InventoryInstance = CreateWidget<UUserWidget>(this, WBP_InventoryClass);
+			if (WBP_InventoryInstance)
+			{
+				WBP_InventoryInstance->AddToViewport();
+				WBP_InventoryInstance->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("WBP_InventoryClass not specified!"));
+		}
 	}
 }

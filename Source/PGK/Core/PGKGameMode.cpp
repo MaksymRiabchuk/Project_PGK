@@ -3,6 +3,7 @@
 #include "PGKGameMode.h"
 
 #include "PGKGameStateBase.h"
+#include "Character/PGKPlayerController.h"
 #include "Character/PGKPlayerState.h"
 
 APGKGameMode::APGKGameMode()
@@ -29,7 +30,11 @@ void APGKGameMode::RespawnPlayer(AController* Controller)
 		}
 
 		RestartPlayer(Controller);
-        
-		UE_LOG(LogTemp, Warning, TEXT("Player respawned!"));
+		APGKPlayerController * PC = Cast<APGKPlayerController>(Controller);
+		if (PC)
+		{
+			PC->RefreshUIBindings();
+		}
+		
 	}
 }
