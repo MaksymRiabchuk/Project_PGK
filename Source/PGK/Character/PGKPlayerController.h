@@ -54,7 +54,10 @@ public:
 	void HideInventoryWidget();
 	
 	UFUNCTION(BlueprintCallable, Category = "UI")
-	void RefreshUIBindings();
+	void InitializeUI();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ResetUI();
 protected:
 
 	/** Input Mapping Contexts */

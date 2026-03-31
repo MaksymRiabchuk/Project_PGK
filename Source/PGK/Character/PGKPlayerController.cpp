@@ -39,7 +39,7 @@ void APGKPlayerController::BeginPlay()
 	SetInputMode(InputModeData);
 	bShowMouseCursor = false;
 
-	RefreshUIBindings();
+	InitializeUI();
 	
 }
 
@@ -127,59 +127,80 @@ void APGKPlayerController::HideInventoryWidget()
 	}
 }
 
-void APGKPlayerController::RefreshUIBindings()
+void APGKPlayerController::InitializeUI()
 {
-	if (IsLocalPlayerController())
-	{
-		if (HUDWidgetClass)
-		{
-			HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
-			if (HUDWidgetInstance)
-			{
-				HUDWidgetInstance->AddToViewport();
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("HUDWidgetClass not specified!"));
-		}
-		if (WBP_TimeClass)
-		{
-			WBP_TimeInstance = CreateWidget<UUserWidget>(this, WBP_TimeClass);
-			if (WBP_TimeInstance)
-			{
-				WBP_TimeInstance->AddToViewport();
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("WBP_TimeInstanceClass not specified!"));
-		}
-		if (WBP_InteractionTextClass)
-		{
-			WBP_InteractionTextInstance = CreateWidget<UPGKInteractionTextWidget>(this, WBP_InteractionTextClass);
-			if (WBP_InteractionTextInstance)
-			{
-				WBP_InteractionTextInstance->AddToViewport();
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("WBP_InteractionTextClass not specified!"));
-		}
+    if (!IsLocalPlayerController()) return;
 
-		if (WBP_InventoryClass)
-		{
-			WBP_InventoryInstance = CreateWidget<UUserWidget>(this, WBP_InventoryClass);
-			if (WBP_InventoryInstance)
-			{
-				WBP_InventoryInstance->AddToViewport();
-				WBP_InventoryInstance->SetVisibility(ESlateVisibility::Hidden);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("WBP_InventoryClass not specified!"));
-		}
-	}
+    // spawn the mobile controls widget
+    if (ShouldUseTouchControls())
+    {
+       MobileControlsWidget = CreateWidget<UUserWidget>(this, MobileControlsWidgetClass);
+       if (MobileControlsWidget)
+       {
+          MobileControlsWidget->AddToPlayerScreen(0);
+       } 
+       else 
+       {
+          UE_LOG(LogPGK, Error, TEXT("Could not spawn mobile controls widget."));
+       }
+    }
+
+    if (HUDWidgetClass)
+    {
+       HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+       if (HUDWidgetInstance) HUDWidgetInstance->AddToViewport();
+    }
+
+    if (WBP_TimeClass)
+    {
+       WBP_TimeInstance = CreateWidget<UUserWidget>(this, WBP_TimeClass);
+       if (WBP_TimeInstance) WBP_TimeInstance->AddToViewport();
+    }
+
+    if (WBP_InteractionTextClass)
+    {
+       WBP_InteractionTextInstance = CreateWidget<UPGKInteractionTextWidget>(this, WBP_InteractionTextClass);
+       if (WBP_InteractionTextInstance) WBP_InteractionTextInstance->AddToViewport();
+    }
+
+    if (WBP_InventoryClass)
+    {
+       WBP_InventoryInstance = CreateWidget<UUserWidget>(this, WBP_InventoryClass);
+       if (WBP_InventoryInstance)
+       {
+          WBP_InventoryInstance->AddToViewport();
+          WBP_InventoryInstance->SetVisibility(ESlateVisibility::Hidden);
+       }
+    }
+}
+
+void APGKPlayerController::ResetUI()
+{
+    if (MobileControlsWidget)
+    {
+        MobileControlsWidget->RemoveFromParent();
+        MobileControlsWidget = nullptr;
+    }
+    if (HUDWidgetInstance)
+    {
+        HUDWidgetInstance->RemoveFromParent();
+        HUDWidgetInstance = nullptr;
+    }
+    if (WBP_TimeInstance)
+    {
+        WBP_TimeInstance->RemoveFromParent();
+        WBP_TimeInstance = nullptr;
+    }
+    if (WBP_InteractionTextInstance)
+    {
+        WBP_InteractionTextInstance->RemoveFromParent();
+        WBP_InteractionTextInstance = nullptr;
+    }
+    if (WBP_InventoryInstance)
+    {
+        WBP_InventoryInstance->RemoveFromParent();
+        WBP_InventoryInstance = nullptr;
+    }
+
+    InitializeUI();
 }

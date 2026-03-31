@@ -33,7 +33,7 @@ void APGKGameMode::RespawnPlayer(AController* Controller)
 		APGKPlayerController * PC = Cast<APGKPlayerController>(Controller);
 		if (PC)
 		{
-			PC->RefreshUIBindings();
+			PC->ResetUI();
 		}
 		
 	}
