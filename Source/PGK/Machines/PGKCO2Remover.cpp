@@ -3,6 +3,8 @@
 
 #include "Machines/PGKCO2Remover.h"
 
+#include "Character/PGKCharacter.h"
+
 // Sets default values
 APGKCO2Remover::APGKCO2Remover()
 {
@@ -27,13 +29,17 @@ void APGKCO2Remover::Tick(float DeltaTime)
 
 FText APGKCO2Remover::GetInteractText_Implementation()
 {
-	return FText::FromString(TEXT("Press E to pickup"));
+	return FText::FromString(TEXT("Press E to open"));
 }
 
 void APGKCO2Remover::Interact_Implementation(APGKCharacter* InteractorCharacter)
 {
 	if (InteractorCharacter)
 	{
-		Destroy();
+		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
+		if (PC)
+		{
+			Client_OpenMachineUI_Implementation(PC);			
+		}
 	}
 }

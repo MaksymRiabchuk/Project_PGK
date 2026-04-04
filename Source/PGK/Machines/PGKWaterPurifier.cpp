@@ -2,6 +2,7 @@
 
 
 #include "Machines/PGKWaterPurifier.h"
+#include "Character/PGKCharacter.h"
 
 // Sets default values
 APGKWaterPurifier::APGKWaterPurifier()
@@ -33,6 +34,10 @@ void APGKWaterPurifier::Interact_Implementation(APGKCharacter* InteractorCharact
 {
 	if (InteractorCharacter)
 	{
-		Destroy();
+		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
+		if (PC)
+		{
+			Client_OpenMachineUI_Implementation(PC);			
+		}
 	}
 }

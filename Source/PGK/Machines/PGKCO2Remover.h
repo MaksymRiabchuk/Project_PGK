@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PGKMachineBase.h"
 #include "Core/Interfaces/PGKInteractableInterface.h"
 #include "GameFramework/Actor.h"
 #include "PGKCO2Remover.generated.h"
 
 UCLASS()
-class PGK_API APGKCO2Remover : public AActor, public IPGKInteractableInterface
+class PGK_API APGKCO2Remover : public APGKMachineBase
 {
 	GENERATED_BODY()
 	

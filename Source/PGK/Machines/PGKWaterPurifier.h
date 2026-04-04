@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PGKMachineBase.h"
 #include "Core/Interfaces/PGKInteractableInterface.h"
 #include "GameFramework/Actor.h"
 #include "PGKWaterPurifier.generated.h"
 
 UCLASS()
-class PGK_API APGKWaterPurifier : public AActor, public IPGKInteractableInterface
+class PGK_API APGKWaterPurifier : public APGKMachineBase
 {
 	GENERATED_BODY()
 	
