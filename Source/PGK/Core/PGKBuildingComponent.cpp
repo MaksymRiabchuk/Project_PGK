@@ -113,12 +113,12 @@ void UPGKBuildingComponent::Server_ConstructBuilding_Implementation(UPGKBuilding
     UPGKInventoryComponent* Inventory = Character->GetInventoryComponent();
     if (!Inventory) return;
 
-    if (!Inventory->HasRecipeItems(BuildingData->Recipe))
+    if (!Inventory->HasRequiredItems(BuildingData->Recipe))
     {
         UE_LOG(LogTemp, Warning, TEXT("Server: Player %s tried to build without resources!"), *Character->GetName());
         return; 
     }
-    Inventory->ConsumeRecipeItems(BuildingData->Recipe);
+    Inventory->ConsumeRequiredItems(BuildingData->Recipe);
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
     

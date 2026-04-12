@@ -8,8 +8,11 @@
 #include "Blueprint/UserWidget.h"
 #include "PGK.h"
 #include "Character/PGKCameraManager.h"
+#include "Character/PGKCharacter.h"
+#include "Core/Inventory/PGKInventoryComponent.h"
 #include "Widgets/PGKInteractionTextWidget.h"
 #include "Widgets/Input/SVirtualJoystick.h"
+
 
 APGKPlayerController::APGKPlayerController()
 {
@@ -203,4 +206,33 @@ void APGKPlayerController::ResetUI()
     }
 
     InitializeUI();
+}
+
+void APGKPlayerController::RequestCraftItem(UPGKCraftingRecipeData* Recipe)
+{
+	if (Recipe)
+	{
+		Server_RequestCraftItem(Recipe);
+	}
+}
+
+void APGKPlayerController::Server_RequestCraftItem_Implementation(UPGKCraftingRecipeData* recipe)
+{
+	if (!recipe) return;
+
+	APGKCharacter* MyCharacter = Cast<APGKCharacter>(GetPawn());
+	if (!MyCharacter) return;
+
+	UPGKInventoryComponent* Inventory = MyCharacter->GetInventoryComponent(); 
+	if (!Inventory) return;
+	
+	if (Inventory->HasRequiredItems(recipe->RequiredIngredients))
+	{
+		Inventory->ConsumeRequiredItems(recipe->RequiredIngredients);
+		Inventory->Server_AddItem(recipe->OutputItem, recipe->OutputAmount);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Crafting failed: Not enough materials for %s"), *recipe->GetName());
+	}
 }

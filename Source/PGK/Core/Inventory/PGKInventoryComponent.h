@@ -7,6 +7,8 @@
 #include "PGKItemData.h"
 #include "PGKInventoryComponent.generated.h"
 
+struct FPGKItemAmount;
+
 USTRUCT(BlueprintType)
 struct FPGKInventorySlot
 {
@@ -55,11 +57,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Inventory | Events")
 	FOnInventoryUpdated OnInventoryUpdated;
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory | Crafting")
-	bool HasRecipeItems(const TArray<struct FPGKCraftingRequirement>& Recipe) const;
+	UFUNCTION(BlueprintCallable, Category = "Inventory | Items")
+	bool HasRequiredItems(const TArray<FPGKItemAmount>& RequiredItems) const;
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory | Crafting")
-	void ConsumeRecipeItems(const TArray<struct FPGKCraftingRequirement>& Recipe);
+	UFUNCTION(BlueprintCallable, Category = "Inventory | Items")
+	void ConsumeRequiredItems(const TArray<FPGKItemAmount>& RequiredItems);
 
 protected:
 	void CheckOverweightDebuff();

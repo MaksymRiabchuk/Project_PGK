@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "Core/Types/PGKCraftingRecipeData.h"
 #include "PGKPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -88,4 +89,12 @@ protected:
 
 	/** Returns true if the player should use UMG touch controls */
 	bool ShouldUseTouchControls() const;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Crafting")
+	void RequestCraftItem(UPGKCraftingRecipeData* Recipe);
+
+protected:
+	UFUNCTION(Server, Reliable)
+	void Server_RequestCraftItem(UPGKCraftingRecipeData* Recipe);
 };
