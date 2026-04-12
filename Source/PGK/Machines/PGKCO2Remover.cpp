@@ -2,7 +2,6 @@
 
 
 #include "Machines/PGKCO2Remover.h"
-
 #include "Character/PGKCharacter.h"
 
 // Sets default values
