@@ -25,6 +25,9 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Crafting")
+	TArray<UPGKBuildingData*> AvailableBuildings;
+	
 	UFUNCTION(BlueprintCallable, Category = "Building")
 	void StartBuilding(UPGKBuildingData* BuildingData);
 

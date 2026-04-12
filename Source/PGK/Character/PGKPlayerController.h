@@ -46,6 +46,11 @@ public:
 	UPROPERTY()
 	class UUserWidget* WBP_InventoryInstance;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> WBP_BuildingMenuClass;
+	UPROPERTY()
+	class UUserWidget* WBP_BuildingMenuInstance;
+
 	void ShowInteractionWidget(const FText& InteractText);
 
 	void HideInteractionWidget();
@@ -53,6 +58,11 @@ public:
 	void ShowInventoryWidget();
 	UFUNCTION(BlueprintCallable, Category="Inventory")
 	void HideInventoryWidget();
+
+	UFUNCTION(BlueprintCallable, Category="Building")
+	void ShowBuildingMenuWidget();
+	UFUNCTION(BlueprintCallable, Category="Building")
+	void HideBuildingMenuWidget();
 	
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void InitializeUI();

@@ -130,6 +130,29 @@ void APGKPlayerController::HideInventoryWidget()
 	}
 }
 
+void APGKPlayerController::ShowBuildingMenuWidget()
+{
+	if (WBP_BuildingMenuInstance && !WBP_BuildingMenuInstance->IsVisible())
+	{
+		WBP_BuildingMenuInstance->SetVisibility(ESlateVisibility::Visible);
+		FInputModeUIOnly InputModeData;
+		InputModeData.SetWidgetToFocus(WBP_BuildingMenuInstance->TakeWidget());
+		SetInputMode(InputModeData);
+		bShowMouseCursor = true;
+	}
+}
+
+void APGKPlayerController::HideBuildingMenuWidget()
+{
+	if (WBP_BuildingMenuInstance && WBP_BuildingMenuInstance->IsVisible())
+	{
+		WBP_BuildingMenuInstance->SetVisibility(ESlateVisibility::Hidden);
+		FInputModeGameOnly InputModeData;
+		SetInputMode(InputModeData);
+		bShowMouseCursor = false;
+	}
+}
+
 void APGKPlayerController::InitializeUI()
 {
     if (!IsLocalPlayerController()) return;
@@ -175,6 +198,16 @@ void APGKPlayerController::InitializeUI()
           WBP_InventoryInstance->SetVisibility(ESlateVisibility::Hidden);
        }
     }
+
+	if (WBP_BuildingMenuClass)
+	{
+		WBP_BuildingMenuInstance = CreateWidget<UUserWidget>(this, WBP_BuildingMenuClass);
+		if (WBP_BuildingMenuInstance)
+		{
+			WBP_BuildingMenuInstance->AddToViewport();
+			WBP_BuildingMenuInstance->SetVisibility(ESlateVisibility ::Hidden);
+		}
+	}
 }
 
 void APGKPlayerController::ResetUI()
@@ -204,6 +237,11 @@ void APGKPlayerController::ResetUI()
         WBP_InventoryInstance->RemoveFromParent();
         WBP_InventoryInstance = nullptr;
     }
+	if (WBP_BuildingMenuInstance)
+	{
+		WBP_BuildingMenuInstance->RemoveFromParent();
+		WBP_BuildingMenuInstance = nullptr;
+	}
 
     InitializeUI();
 }
