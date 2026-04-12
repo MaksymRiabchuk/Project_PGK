@@ -147,15 +147,15 @@ void UPGKInventoryComponent::CheckOverweightDebuff()
     }
 }
 
-bool UPGKInventoryComponent::HasRecipeItems(const TArray<FPGKCraftingRequirement>& Recipe) const
+bool UPGKInventoryComponent::HasRequiredItems(const TArray<FPGKItemAmount>& RequiredItems) const
 {
-    for (const FPGKCraftingRequirement& Req : Recipe)
+    for (const FPGKItemAmount& Req : RequiredItems)
     {
-        if (!Req.RequiredItem || Req.Amount <= 0) continue;
+        if (!Req.ItemData || Req.Amount <= 0) continue;
         int32 TotalFound = 0;
         for (const FPGKInventorySlot& Slot : InventorySlots)
         {
-            if (Slot.ItemData == Req.RequiredItem)
+            if (Slot.ItemData == Req.ItemData)
             {
                 TotalFound += Slot.Quantity;
             }
@@ -168,16 +168,16 @@ bool UPGKInventoryComponent::HasRecipeItems(const TArray<FPGKCraftingRequirement
     return true; 
 }
 
-void UPGKInventoryComponent::ConsumeRecipeItems(const TArray<FPGKCraftingRequirement>& Recipe)
+void UPGKInventoryComponent::ConsumeRequiredItems(const TArray<FPGKItemAmount>& RequiredItems)
 {
-    if (!HasRecipeItems(Recipe)) return;
-    for (const FPGKCraftingRequirement& Req : Recipe)
+    if (!HasRequiredItems(RequiredItems)) return;
+    for (const FPGKItemAmount& Req : RequiredItems)
     {
-        if (!Req.RequiredItem || Req.Amount <= 0) continue;
+        if (!Req.ItemData || Req.Amount <= 0) continue;
         int32 RemainingToRemove = Req.Amount;
         for (int32 i = InventorySlots.Num() - 1; i >= 0; --i)
         {
-            if (InventorySlots[i].ItemData == Req.RequiredItem)
+            if (InventorySlots[i].ItemData == Req.ItemData)
             {
                 if (InventorySlots[i].Quantity >= RemainingToRemove)
                 {

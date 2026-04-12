@@ -3,23 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/Inventory/PGKItemData.h"
+#include "PGKItemAmount.h"
 #include "Engine/DataAsset.h"
 #include "PGKBuildingData.generated.h"
 class UPGKItemData;
 class AActor;
 
-USTRUCT(BlueprintType)
-struct FPGKCraftingRequirement
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recipe")
-	UPGKItemData* RequiredItem;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recipe", meta = (ClampMin = "1"))
-	int32 Amount = 1;
-};
 /**
  * 
  */
@@ -39,7 +28,7 @@ public:
 	class UTexture2D* BuildingIcon;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Building Info")
-	TArray<FPGKCraftingRequirement> Recipe;
+	TArray<FPGKItemAmount> Recipe;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Building Info")
 	float ZOffset = 0.0f;

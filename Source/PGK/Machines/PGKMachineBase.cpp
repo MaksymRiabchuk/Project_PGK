@@ -4,6 +4,7 @@
 #include "Machines/PGKMachineBase.h"
 #include "Character/PGKCharacter.h"
 #include "Core/Inventory/PGKInventoryComponent.h"
+#include "Widgets/PGKMachineUserWidget.h"
 
 APGKMachineBase::APGKMachineBase()
 {
@@ -28,11 +29,12 @@ void APGKMachineBase::Client_OpenMachineUI_Implementation(APGKPlayerController* 
 {
 	if (!InteractorController || !MachineWidgetClass) return;
 
-	UUserWidget* MachineWidget = CreateWidget<UUserWidget>(InteractorController, MachineWidgetClass);
+	UPGKMachineUserWidget* MachineWidget = CreateWidget<UPGKMachineUserWidget>(InteractorController, MachineWidgetClass);
 	if (MachineWidget)
 	{
+		MachineWidget->OwningMachine = this;
 		MachineWidget->AddToViewport();
-        
+		MachineWidget->OnMachineInitialized();
 		FInputModeUIOnly InputMode;
 		InputMode.SetWidgetToFocus(MachineWidget->TakeWidget());
 		InteractorController->SetInputMode(InputMode);
