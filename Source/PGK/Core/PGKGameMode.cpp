@@ -34,6 +34,9 @@ void APGKGameMode::RespawnPlayer(AController* Controller)
 		if (PC)
 		{
 			PC->ResetUI();
+			FInputModeGameOnly InputModeData;
+			PC->SetInputMode(InputModeData);
+			PC->SetShowMouseCursor(false);
 		}
 		
 	}
