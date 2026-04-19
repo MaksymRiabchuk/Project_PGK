@@ -38,7 +38,7 @@ void APGKCO2Remover::Interact_Implementation(APGKCharacter* InteractorCharacter)
 		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
 		if (PC)
 		{
-			Client_OpenMachineUI_Implementation(PC);			
+			Client_OpenMachineUI(PC);			
 		}
 	}
 }
