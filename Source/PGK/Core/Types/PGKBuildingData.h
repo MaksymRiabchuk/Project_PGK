@@ -38,5 +38,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Building Classes")
 	TSubclassOf<AActor> ConstructedClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Placement Rules")
+	bool bRequiresWater = false;
 	
 };

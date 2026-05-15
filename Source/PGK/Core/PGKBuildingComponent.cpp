@@ -1,5 +1,7 @@
 
 #include "Core/PGKBuildingComponent.h"
+
+#include "PGK.h"
 #include "Core/Inventory/PGKInventoryComponent.h"
 #include "Types/PGKBuildingData.h"
 #include "PGKHologramPreview.h"
@@ -73,15 +75,39 @@ void UPGKBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
         FVector SnappedLocation;
         SnappedLocation.X = FMath::GridSnap(HitResult.ImpactPoint.X, GridSize);
         SnappedLocation.Y = FMath::GridSnap(HitResult.ImpactPoint.Y, GridSize);
-        
         SnappedLocation.Z = FMath::GridSnap(HitResult.ImpactPoint.Z, GridSize);
-
         SnappedLocation.Z += CurrentBuildingData->ZOffset;
-        FRotator TargetRotation = FRotator(0.0f, CurrentHologramYaw, 0.0f);
 
+        FRotator TargetRotation = FRotator(0.0f, CurrentHologramYaw, 0.0f);
         CurrentHologram->SetActorLocationAndRotation(SnappedLocation, TargetRotation);
+
         bool bIsSurfaceHorizontal = HitResult.ImpactNormal.Z > 0.7f;
-        bool bCanBuild = bIsSurfaceHorizontal && !CurrentHologram->HasAnyOverlaps();
+        bool bNoOverlaps = !CurrentHologram->HasAnyOverlaps();
+        bool bIsHittingWater = HitResult.GetActor() && HitResult.GetActor()->ActorHasTag(TEXT("Water"));
+
+        if (bHit && HitResult.GetActor())
+        {
+            FString ActorName = HitResult.GetActor()->GetName();
+            bool bHasTag = HitResult.GetActor()->ActorHasTag(TEXT("Water"));
+    
+            UE_LOG(LogTemp, Warning, TEXT("Промінь влучив у: %s | Має тег Water: %s"), *ActorName, bHasTag ? TEXT("ТАК") : TEXT("НІ"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Промінь взагалі нікуди не влучив!"));
+        }
+
+        bool bPlacementRuleMet;
+
+        if (CurrentBuildingData->bRequiresWater)
+        {
+            bPlacementRuleMet = bIsSurfaceHorizontal && bIsHittingWater;
+        }
+        else
+        {
+            bPlacementRuleMet = bIsSurfaceHorizontal && !bIsHittingWater;
+        }
+        bool bCanBuild = bPlacementRuleMet && bNoOverlaps;
         CurrentHologram->UpdateHologramState(bCanBuild);
     }
     else

@@ -70,6 +70,10 @@ bool APGKHologramPreview::HasAnyOverlaps() const
 	{
 		if (Actor && Actor != this && Actor != GetOwner())
 		{
+			if (Actor->ActorHasTag(TEXT("Water")))
+			{
+				continue;
+			}
 			return true;
 		}
 	}

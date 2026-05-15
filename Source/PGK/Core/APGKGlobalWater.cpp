@@ -13,8 +13,13 @@ APGKGlobalWater::APGKGlobalWater()
 	SetReplicatingMovement(true);
 
 	WaterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WaterMesh"));
-	RootComponent = WaterMesh;
+	RootComponent = WaterMesh;	
 
+	Tags.Add(FName("Water"));
+	WaterMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	WaterMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	WaterMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+    
 	UnderwaterVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("UnderwaterVolume"));
 	UnderwaterVolume->SetupAttachment(RootComponent);
 	UnderwaterVolume->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
