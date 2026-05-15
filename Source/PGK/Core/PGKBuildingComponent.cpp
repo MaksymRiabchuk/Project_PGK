@@ -85,18 +85,6 @@ void UPGKBuildingComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
         bool bNoOverlaps = !CurrentHologram->HasAnyOverlaps();
         bool bIsHittingWater = HitResult.GetActor() && HitResult.GetActor()->ActorHasTag(TEXT("Water"));
 
-        if (bHit && HitResult.GetActor())
-        {
-            FString ActorName = HitResult.GetActor()->GetName();
-            bool bHasTag = HitResult.GetActor()->ActorHasTag(TEXT("Water"));
-    
-            UE_LOG(LogTemp, Warning, TEXT("Промінь влучив у: %s | Має тег Water: %s"), *ActorName, bHasTag ? TEXT("ТАК") : TEXT("НІ"));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Промінь взагалі нікуди не влучив!"));
-        }
-
         bool bPlacementRuleMet;
 
         if (CurrentBuildingData->bRequiresWater)
