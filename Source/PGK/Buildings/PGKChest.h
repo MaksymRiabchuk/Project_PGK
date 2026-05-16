@@ -27,4 +27,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UPGKInventoryComponent* InventoryComponent;
+	
+	UFUNCTION(BlueprintPure, Category = "Components|Inventory")
+	FORCEINLINE class UPGKInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
 };

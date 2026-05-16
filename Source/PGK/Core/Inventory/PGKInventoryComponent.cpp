@@ -127,6 +127,30 @@ void UPGKInventoryComponent::Server_AddItem_Implementation(UPGKItemData* ItemToA
     CheckOverweightDebuff();
 }
 
+void UPGKInventoryComponent::Server_RemoveItemFromSlot_Implementation(int32 SlotIndex, int32 AmountToRemove)
+{
+    if (!InventorySlots.IsValidIndex(SlotIndex) || AmountToRemove <= 0) return;
+    
+    if (!InventorySlots[SlotIndex].ItemData) return;
+
+    int32 CurrentQuantity = InventorySlots[SlotIndex].Quantity;
+    int32 ActualAmountToRemove = FMath::Min(AmountToRemove, CurrentQuantity);
+
+    InventorySlots[SlotIndex].Quantity -= ActualAmountToRemove;
+
+    if (InventorySlots[SlotIndex].Quantity <= 0)
+    {
+        InventorySlots[SlotIndex].ItemData = nullptr;
+        InventorySlots[SlotIndex].Quantity = 0;
+    }
+
+    if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
+    {
+        OnRep_InventorySlots();
+    }
+    CheckOverweightDebuff();
+}
+
 void UPGKInventoryComponent::CheckOverweightDebuff()
 {
     ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());

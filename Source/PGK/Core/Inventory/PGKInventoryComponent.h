@@ -46,10 +46,13 @@ public:
 	void OnRep_InventorySlots();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
-	int32 MaxInventorySize = 20;
+	int32 MaxInventorySize = 30;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
 	void Server_AddItem(UPGKItemData* ItemToAdd, int32 Amount);
+	
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
+	void Server_RemoveItemFromSlot(int32 SlotIndex, int32 AmountToRemove);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
 	void Server_ConsumeItem(UPGKConsumableItemData* ItemToAdd, int32 Amount);

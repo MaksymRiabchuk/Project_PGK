@@ -3,12 +3,15 @@
 
 #include "Buildings/PGKChest.h"
 #include "Character/PGKCharacter.h"
+#include "Core/Inventory/PGKInventoryComponent.h"
 
 // Sets default values
 APGKChest::APGKChest()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	InventoryComponent = CreateDefaultSubobject<UPGKInventoryComponent>(TEXT("PGK_Inventory"));
+	InventoryComponent->SetIsReplicated(true);
 
 }
 
