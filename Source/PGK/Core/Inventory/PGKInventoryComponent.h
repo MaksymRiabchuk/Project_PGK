@@ -66,6 +66,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory | Items")
 	void ConsumeRequiredItems(const TArray<FPGKItemAmount>& RequiredItems);
 
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
+	void Server_TransferItem(UPGKInventoryComponent* TargetInventory, int32 SourceSlotIndex, int32 AmountToTransfer);
+
 protected:
 	void CheckOverweightDebuff();
+	virtual void BeginPlay() override;
 };

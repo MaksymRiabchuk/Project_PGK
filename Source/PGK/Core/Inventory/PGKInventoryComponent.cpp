@@ -10,6 +10,16 @@ UPGKInventoryComponent::UPGKInventoryComponent()
     SetIsReplicatedByDefault(true); 
 }
 
+void UPGKInventoryComponent::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (InventorySlots.Num() != MaxInventorySize)
+    {
+        InventorySlots.SetNum(MaxInventorySize);
+    }
+}
+
 void UPGKInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -57,7 +67,8 @@ void UPGKInventoryComponent::Server_ConsumeItem_Implementation(UPGKConsumableIte
 
             if (InventorySlots[i].Quantity <= 0)
             {
-                InventorySlots.RemoveAt(i);
+                InventorySlots[i].ItemData = nullptr;
+                InventorySlots[i].Quantity = 0;
             }
 
             if (RemainingToRemove <= 0)
@@ -103,16 +114,24 @@ void UPGKInventoryComponent::Server_AddItem_Implementation(UPGKItemData* ItemToA
         }
     }
     
-    while (RemainingAmount > 0 && InventorySlots.Num() < MaxInventorySize)
+    if (RemainingAmount > 0)
     {
-        int32 AmountForNewSlot = FMath::Min(RemainingAmount, ItemToAdd->MaxStackSize);
-
-        FPGKInventorySlot NewSlot;
-        NewSlot.ItemData = ItemToAdd;
-        NewSlot.Quantity = AmountForNewSlot;
-        
-        InventorySlots.Add(NewSlot);
-        RemainingAmount -= AmountForNewSlot;
+        for (int32 i = 0; i < InventorySlots.Num(); ++i)
+        {
+            if (InventorySlots[i].ItemData == nullptr) 
+            {
+                int32 AmountForNewSlot = FMath::Min(RemainingAmount, ItemToAdd->MaxStackSize);
+                
+                InventorySlots[i].ItemData = ItemToAdd;
+                InventorySlots[i].Quantity = AmountForNewSlot;
+                
+                RemainingAmount -= AmountForNewSlot;
+                if (RemainingAmount <= 0)
+                {
+                    break; 
+                }
+            }
+        }
     }
 
     if (RemainingAmount > 0)
@@ -147,7 +166,7 @@ void UPGKInventoryComponent::Server_RemoveItemFromSlot_Implementation(int32 Slot
     if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
     {
         OnRep_InventorySlots();
-    }
+    }   
     CheckOverweightDebuff();
 }
 
@@ -159,7 +178,16 @@ void UPGKInventoryComponent::CheckOverweightDebuff()
     UCharacterMovementComponent* MovementComp = OwnerCharacter->GetCharacterMovement();
     if (!MovementComp) return;
 
-    float FillPercentage = (float)InventorySlots.Num() / (float)MaxInventorySize;
+    int32 OccupiedSlots = 0;
+    for (const FPGKInventorySlot& Slot : InventorySlots)
+    {
+        if (Slot.ItemData != nullptr)
+        {
+            OccupiedSlots++;
+        }
+    }
+
+    float FillPercentage = (float)OccupiedSlots / (float)MaxInventorySize;
 
     if (FillPercentage >= 0.8f)
     {
@@ -235,4 +263,74 @@ void UPGKInventoryComponent::ConsumeRequiredItems(const TArray<FPGKItemAmount>& 
 void UPGKInventoryComponent::OnRep_InventorySlots()
 {
     OnInventoryUpdated.Broadcast();
+}
+
+
+void UPGKInventoryComponent::Server_TransferItem_Implementation(UPGKInventoryComponent* TargetInventory, int32 SourceSlotIndex, int32 AmountToTransfer)
+{
+    if (!TargetInventory || TargetInventory == this) return;
+    if (AmountToTransfer <= 0) return;
+    if (!InventorySlots.IsValidIndex(SourceSlotIndex)) return;
+
+    FPGKInventorySlot& SourceSlot = InventorySlots[SourceSlotIndex]; 
+    
+    if (!SourceSlot.ItemData || SourceSlot.Quantity <= 0) return;
+
+    int32 ActualAmountToMove = FMath::Min(AmountToTransfer, SourceSlot.Quantity);
+    int32 AmountRemainingToMove = ActualAmountToMove;
+
+    for (int32 i = 0; i < TargetInventory->InventorySlots.Num(); ++i)
+    {
+        if (TargetInventory->InventorySlots[i].ItemData == SourceSlot.ItemData)
+        {
+            int32 SpaceLeftInSlot = SourceSlot.ItemData->MaxStackSize - TargetInventory->InventorySlots[i].Quantity;
+            if (SpaceLeftInSlot > 0)
+            {
+                int32 AmountToPut = FMath::Min(SpaceLeftInSlot, AmountRemainingToMove);
+                TargetInventory->InventorySlots[i].Quantity += AmountToPut;
+                AmountRemainingToMove -= AmountToPut;
+
+                if (AmountRemainingToMove <= 0) break;
+            }
+        }
+    }
+
+    if (AmountRemainingToMove > 0)
+    {
+        for (int32 i = 0; i < TargetInventory->InventorySlots.Num(); ++i)
+        {
+            if (TargetInventory->InventorySlots[i].ItemData == nullptr) 
+            {
+                int32 AmountForNewSlot = FMath::Min(AmountRemainingToMove, SourceSlot.ItemData->MaxStackSize);
+                
+                TargetInventory->InventorySlots[i].ItemData = SourceSlot.ItemData;
+                TargetInventory->InventorySlots[i].Quantity = AmountForNewSlot;
+
+                AmountRemainingToMove -= AmountForNewSlot;
+                
+                if (AmountRemainingToMove <= 0) break; 
+            }
+        }
+    }
+    
+    int32 AmountSuccessfullyMoved = ActualAmountToMove - AmountRemainingToMove;
+
+    if (AmountSuccessfullyMoved > 0)
+    {
+        SourceSlot.Quantity -= AmountSuccessfullyMoved;
+
+        if (SourceSlot.Quantity <= 0)
+        {
+            SourceSlot.ItemData = nullptr;
+            SourceSlot.Quantity = 0;
+        }
+        if (GetOwner()->HasAuthority())
+        {
+            this->OnRep_InventorySlots();
+            TargetInventory->OnRep_InventorySlots();
+
+            this->CheckOverweightDebuff();
+            TargetInventory->CheckOverweightDebuff();
+        }
+    }
 }
