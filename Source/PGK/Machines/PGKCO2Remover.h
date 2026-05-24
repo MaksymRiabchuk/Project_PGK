@@ -26,5 +26,15 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CO2 Remover")
+	double CO2RemoveAmount = 0.0001;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CO2 Remover")
+	float RemoveInterval = 10.f;
+
+private:
+	FTimerHandle CO2TimerHandle;
+
+	void RemoveCO2Tick();
 
 };

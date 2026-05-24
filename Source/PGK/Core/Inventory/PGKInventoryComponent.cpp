@@ -243,7 +243,8 @@ void UPGKInventoryComponent::ConsumeRequiredItems(const TArray<FPGKItemAmount>& 
                 }
                 if (InventorySlots[i].Quantity <= 0)
                 {
-                    InventorySlots.RemoveAt(i);
+                    InventorySlots[i].ItemData = nullptr;
+                    InventorySlots[i].Quantity = 0;
                 }
 
                 if (RemainingToRemove <= 0)
@@ -271,7 +272,7 @@ void UPGKInventoryComponent::Server_TransferItem_Implementation(UPGKInventoryCom
     if (!TargetInventory || TargetInventory == this) return;
     if (AmountToTransfer <= 0) return;
     if (!InventorySlots.IsValidIndex(SourceSlotIndex)) return;
-
+    
     FPGKInventorySlot& SourceSlot = InventorySlots[SourceSlotIndex]; 
     
     if (!SourceSlot.ItemData || SourceSlot.Quantity <= 0) return;
@@ -326,6 +327,7 @@ void UPGKInventoryComponent::Server_TransferItem_Implementation(UPGKInventoryCom
         }
         if (GetOwner()->HasAuthority())
         {
+            UE_LOG(LogTemp, Log, TEXT("................. %s Combined Parameters (%d Spawned )................."), TEXT("GPU Script"), AmountSuccessfullyMoved);
             this->OnRep_InventorySlots();
             TargetInventory->OnRep_InventorySlots();
 
