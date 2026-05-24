@@ -2,6 +2,7 @@
 
 
 #include "PGKPlayerController.h"
+#include "Core/PGKGameMode.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "InputMappingContext.h"
@@ -244,6 +245,19 @@ void APGKPlayerController::ResetUI()
 	}
 
     InitializeUI();
+}
+
+void APGKPlayerController::RequestSaveGame()
+{
+	Server_SaveGame();
+}
+
+void APGKPlayerController::Server_SaveGame_Implementation()
+{
+	if (APGKGameMode* GM = GetWorld()->GetAuthGameMode<APGKGameMode>())
+	{
+		GM->SaveGame();
+	}
 }
 
 void APGKPlayerController::RequestCraftItem(UPGKCraftingRecipeData* Recipe)

@@ -28,6 +28,21 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Settings")
 	UPGKSaveSettings* GetAudioSettings() const { return CurrentSettings; }
 
+	// Called from the main menu to start a fresh game (no save loaded).
+	UFUNCTION(BlueprintCallable, Category = "Save")
+	void NewGame();
+
+	// Called from the main menu to open the game level and trigger save restoration.
+	UFUNCTION(BlueprintCallable, Category = "Save")
+	void LoadSavedGame();
+
+	// True when the game level should restore state from disk on BeginPlay.
+	UPROPERTY(BlueprintReadOnly, Category = "Save")
+	bool bShouldLoadSave = false;
+
+	UFUNCTION(BlueprintPure, Category = "Save")
+	bool HasSaveGame() const;
+
 protected:
 	void OnSaveFinished(const FString& SlotName, int32 UserIndex, bool bSuccess);
 	UPROPERTY()

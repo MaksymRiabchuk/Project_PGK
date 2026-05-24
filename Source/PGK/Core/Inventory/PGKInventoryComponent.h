@@ -69,7 +69,12 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventory")
 	void Server_TransferItem(UPGKInventoryComponent* TargetInventory, int32 SourceSlotIndex, int32 AmountToTransfer);
 
+	void RequestInventoryUpdate();
+
 protected:
 	void CheckOverweightDebuff();
 	virtual void BeginPlay() override;
+
+private:
+	FTimerHandle BroadcastTimerHandle;
 };

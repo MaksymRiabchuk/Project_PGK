@@ -1,7 +1,26 @@
 #include "Network/MainGameInstance.h"
 
 #include "Core/PGKSaveSettings.h"
+#include "Core/PGKSaveGame.h"
 #include "Kismet/GameplayStatics.h"
+
+bool UMainGameInstance::HasSaveGame() const
+{
+	return UGameplayStatics::DoesSaveGameExist(UPGKSaveGame::SaveSlotName, UPGKSaveGame::SaveUserIndex);
+}
+
+void UMainGameInstance::NewGame()
+{
+	bShouldLoadSave = false;
+	HostGame();
+}
+
+void UMainGameInstance::LoadSavedGame()
+{
+	if (!HasSaveGame()) return;
+	bShouldLoadSave = true;
+	HostGame();
+}
 
 void UMainGameInstance::HostGame()
 {

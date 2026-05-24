@@ -104,7 +104,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Crafting")
 	void RequestCraftItem(UPGKCraftingRecipeData* Recipe);
 
+	// Call from any client-side widget to trigger a server-side save.
+	UFUNCTION(BlueprintCallable, Category = "Save")
+	void RequestSaveGame();
+
 protected:
 	UFUNCTION(Server, Reliable)
 	void Server_RequestCraftItem(UPGKCraftingRecipeData* Recipe);
+
+	UFUNCTION(Server, Reliable)
+	void Server_SaveGame();
 };

@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "Character/PGKPlayerController.h"
 #include "Core/Interfaces/PGKInteractableInterface.h"
+#include "Core/Interfaces/PGKSaveableInterface.h"
 #include "GameFramework/Actor.h"
 #include "PGKMachineBase.generated.h"
 
 UCLASS(Abstract)
-class PGK_API APGKMachineBase : public AActor, public IPGKInteractableInterface
+class PGK_API APGKMachineBase : public AActor, public IPGKInteractableInterface, public IPGKSaveableInterface
 {
 	GENERATED_BODY()
 	
@@ -20,6 +21,9 @@ public:
 	TSubclassOf<class UUserWidget> MachineWidgetClass;
 	
 	virtual void Interact_Implementation(APGKCharacter* InteractorCharacter) override;
+
+	virtual FPGKActorSaveData GetActorSaveData_Implementation() override;
+	virtual void ApplyActorSaveData_Implementation(const FPGKActorSaveData& SaveData) override;
 
 protected:
 	UFUNCTION(Client, Reliable)

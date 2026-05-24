@@ -12,7 +12,6 @@ APGKMachineBase::APGKMachineBase()
 	bReplicates = true;
 }
 
-// ВИКОНУЄТЬСЯ НА СЕРВЕРІ
 void APGKMachineBase::Interact_Implementation(APGKCharacter* InteractorCharacter)
 {
 	if (!InteractorCharacter) return;
@@ -40,6 +39,19 @@ void APGKMachineBase::Client_OpenMachineUI_Implementation(APGKPlayerController* 
 		InteractorController->SetInputMode(InputMode);
 		InteractorController->SetShowMouseCursor(true);
 	}
+}
+
+FPGKActorSaveData APGKMachineBase::GetActorSaveData_Implementation()
+{
+	FPGKActorSaveData Data;
+	Data.ActorClass = GetClass();
+	Data.Transform  = GetActorTransform();
+	return Data;
+}
+
+void APGKMachineBase::ApplyActorSaveData_Implementation(const FPGKActorSaveData& SaveData)
+{
+	SetActorTransform(SaveData.Transform);
 }
 
 // Called when the game starts or when spawned

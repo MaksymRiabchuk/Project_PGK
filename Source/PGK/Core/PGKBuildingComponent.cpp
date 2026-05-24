@@ -135,8 +135,11 @@ void UPGKBuildingComponent::Server_ConstructBuilding_Implementation(UPGKBuilding
     Inventory->ConsumeRequiredItems(BuildingData->Recipe);
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    
-    GetWorld()->SpawnActor<AActor>(BuildingData->ConstructedClass, Location, Rotation, SpawnParams);
+
+    if (AActor* Placed = GetWorld()->SpawnActor<AActor>(BuildingData->ConstructedClass, Location, Rotation, SpawnParams))
+    {
+        Placed->Tags.Add(FName("PlayerPlaced"));
+    }
 }
 
 void UPGKBuildingComponent::RotateHologram(float Direction)

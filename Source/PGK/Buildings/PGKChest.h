@@ -19,6 +19,9 @@ public:
 	virtual FText GetInteractText_Implementation() override;
 	virtual void Interact_Implementation(class APGKCharacter* InteractorCharacter) override;
 
+	virtual FPGKActorSaveData GetActorSaveData_Implementation() override;
+	virtual void ApplyActorSaveData_Implementation(const FPGKActorSaveData& SaveData) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

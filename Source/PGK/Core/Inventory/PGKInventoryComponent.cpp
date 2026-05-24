@@ -85,7 +85,7 @@ void UPGKInventoryComponent::Server_ConsumeItem_Implementation(UPGKConsumableIte
 
     if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
     {
-        OnRep_InventorySlots();
+        RequestInventoryUpdate();
     }
     CheckOverweightDebuff();
 }
@@ -141,7 +141,7 @@ void UPGKInventoryComponent::Server_AddItem_Implementation(UPGKItemData* ItemToA
     
     if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
     {
-        OnRep_InventorySlots();
+        RequestInventoryUpdate();
     }
     CheckOverweightDebuff();
 }
@@ -165,7 +165,7 @@ void UPGKInventoryComponent::Server_RemoveItemFromSlot_Implementation(int32 Slot
 
     if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
     {
-        OnRep_InventorySlots();
+        RequestInventoryUpdate();
     }   
     CheckOverweightDebuff();
 }
@@ -256,7 +256,7 @@ void UPGKInventoryComponent::ConsumeRequiredItems(const TArray<FPGKItemAmount>& 
     }
     if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
     {
-        OnRep_InventorySlots();
+        RequestInventoryUpdate();
     }
     CheckOverweightDebuff(); 
 }
@@ -328,11 +328,27 @@ void UPGKInventoryComponent::Server_TransferItem_Implementation(UPGKInventoryCom
         if (GetOwner()->HasAuthority())
         {
             UE_LOG(LogTemp, Log, TEXT("................. %s Combined Parameters (%d Spawned )................."), TEXT("GPU Script"), AmountSuccessfullyMoved);
-            this->OnRep_InventorySlots();
-            TargetInventory->OnRep_InventorySlots();
+            this->RequestInventoryUpdate();
+            TargetInventory->RequestInventoryUpdate();
 
             this->CheckOverweightDebuff();
             TargetInventory->CheckOverweightDebuff();
         }
     }
+}
+
+void UPGKInventoryComponent::RequestInventoryUpdate()
+{
+    if (BroadcastTimerHandle.IsValid()) return;
+
+    GetWorld()->GetTimerManager().SetTimer(
+        BroadcastTimerHandle,
+        [this]()
+        {
+            BroadcastTimerHandle.Invalidate();
+            OnInventoryUpdated.Broadcast();
+        },
+        0.05f,
+        false
+    );
 }
