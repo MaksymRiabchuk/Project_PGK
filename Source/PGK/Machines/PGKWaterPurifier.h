@@ -1,31 +1,45 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2026 Maksym Riabchuk, Andrii Diachuk. All Rights Reserved
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "PGKMachineBase.h"
-#include "Core/Interfaces/PGKInteractableInterface.h"
-#include "GameFramework/Actor.h"
 #include "PGKWaterPurifier.generated.h"
 
 UCLASS()
 class PGK_API APGKWaterPurifier : public APGKMachineBase
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
+
+public:
 	APGKWaterPurifier();
 
 	virtual FText GetInteractText_Implementation() override;
 	virtual void Interact_Implementation(class APGKCharacter* InteractorCharacter) override;
 
+	virtual FPGKActorSaveData GetActorSaveData_Implementation() override;
+	virtual void ApplyActorSaveData_Implementation(const FPGKActorSaveData& SaveData) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UPGKInventoryComponent* InventoryComponent;
+
+	UFUNCTION(BlueprintPure, Category = "Components|Inventory")
+	FORCEINLINE class UPGKInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
+	// Set this to the water bottle DataAsset in BP_WaterPurifier
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Production")
+	class UPGKItemData* WaterBottleItem;
+
+	// How often (seconds) one water bottle is produced
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Production")
+	float ProductionInterval = 7.f;
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+private:
+	FTimerHandle ProductionTimerHandle;
 
+	UFUNCTION()
+	void ProduceWater();
 };

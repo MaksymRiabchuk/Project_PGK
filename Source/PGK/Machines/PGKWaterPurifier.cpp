@@ -1,43 +1,89 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Copyright 2026 Maksym Riabchuk, Andrii Diachuk. All Rights Reserved
 
 #include "Machines/PGKWaterPurifier.h"
 #include "Character/PGKCharacter.h"
+#include "Character/PGKPlayerController.h"
+#include "Core/Inventory/PGKInventoryComponent.h"
+#include "Core/Inventory/PGKItemData.h"
+#include "Core/Types/PGKSaveTypes.h"
 
-// Sets default values
 APGKWaterPurifier::APGKWaterPurifier()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+	InventoryComponent = CreateDefaultSubobject<UPGKInventoryComponent>(TEXT("InventoryComponent"));
+	InventoryComponent->MaxInventorySize = 5;
+	InventoryComponent->SetIsReplicated(true);
 }
 
-// Called when the game starts or when spawned
 void APGKWaterPurifier::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (HasAuthority() && WaterBottleItem)
+	{
+		GetWorldTimerManager().SetTimer(
+			ProductionTimerHandle,
+			this,
+			&APGKWaterPurifier::ProduceWater,
+			ProductionInterval,
+			true);
+	}
 }
 
-// Called every frame
-void APGKWaterPurifier::Tick(float DeltaTime)
+void APGKWaterPurifier::ProduceWater()
 {
-	Super::Tick(DeltaTime);
-
+	if (WaterBottleItem && InventoryComponent)
+	{
+		InventoryComponent->Server_AddItem(WaterBottleItem, 1);
+		UE_LOG(LogTemp, Warning, TEXT("Water Bottle Produced!"));
+	}
 }
+
 FText APGKWaterPurifier::GetInteractText_Implementation()
 {
-	return FText::FromString(TEXT("Press E to pickup"));
+	return FText::FromString(TEXT("Press E to open Water Purifier"));
 }
 
 void APGKWaterPurifier::Interact_Implementation(APGKCharacter* InteractorCharacter)
 {
-	if (InteractorCharacter)
+	if (!InteractorCharacter) return;
+
+	if (APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController()))
 	{
-		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
-		if (PC)
+		Client_OpenMachineUI(PC);
+	}
+}
+
+FPGKActorSaveData APGKWaterPurifier::GetActorSaveData_Implementation()
+{
+	FPGKActorSaveData Data = Super::GetActorSaveData_Implementation();
+
+	if (InventoryComponent)
+	{
+		for (const FPGKInventorySlot& Slot : InventoryComponent->InventorySlots)
 		{
-			Client_OpenMachineUI_Implementation(PC);			
+			FPGKSavedInventorySlot& Saved = Data.Inventory.AddDefaulted_GetRef();
+			Saved.ItemData = TSoftObjectPtr<UPGKItemData>(Slot.ItemData);
+			Saved.Quantity = Slot.Quantity;
 		}
+	}
+
+	return Data;
+}
+
+void APGKWaterPurifier::ApplyActorSaveData_Implementation(const FPGKActorSaveData& SaveData)
+{
+	SetActorTransform(SaveData.Transform);
+
+	if (!InventoryComponent || SaveData.Inventory.IsEmpty()) return;
+
+	InventoryComponent->InventorySlots.SetNum(InventoryComponent->MaxInventorySize);
+
+	for (int32 i = 0; i < SaveData.Inventory.Num() && i < InventoryComponent->InventorySlots.Num(); ++i)
+	{
+		UPGKItemData* LoadedItem = SaveData.Inventory[i].ItemData.LoadSynchronous();
+		InventoryComponent->InventorySlots[i].ItemData = LoadedItem;
+		InventoryComponent->InventorySlots[i].Quantity  = LoadedItem ? SaveData.Inventory[i].Quantity : 0;
 	}
 }
