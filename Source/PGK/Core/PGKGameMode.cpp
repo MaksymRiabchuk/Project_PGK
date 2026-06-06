@@ -66,13 +66,25 @@ void APGKGameMode::PostLogin(APlayerController* NewPlayer)
 
 	RestartPlayer(NewPlayer);
 
-	if (bHasPendingPlayerLoad)
+	FString SaveID = GetPlayerSaveID(NewPlayer);
+	UE_LOG(LogTemp, Warning, TEXT("Player Joined: %s (pending saves: %d)"), *SaveID, LoadedPlayersData.Num());
+
+	FPGKPlayerSaveData* Found = LoadedPlayersData.Find(SaveID);
+
+	// Fallback: last remaining entry covers newly-joining remote players
+	if (!Found && LoadedPlayersData.Num() > 0)
 	{
-		bHasPendingPlayerLoad = false;
-		ApplyPlayerSaveData(NewPlayer, PendingPlayerData);
+		auto MapIt = LoadedPlayersData.CreateIterator();
+		ApplyPlayerSaveData(NewPlayer, MapIt.Value());
+		MapIt.RemoveCurrent();
+		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Player Joined"));
+	if (Found)
+	{
+		ApplyPlayerSaveData(NewPlayer, *Found);
+		LoadedPlayersData.Remove(SaveID);
+	}
 }
 
 void APGKGameMode::RespawnPlayer(AController* Controller)
@@ -119,7 +131,7 @@ void APGKGameMode::SaveGame()
 		}
 	}
 
-	// --- Player state (first player only for now) ---
+	// --- All connected players ---
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		APlayerController* PC = It->Get();
@@ -128,29 +140,30 @@ void APGKGameMode::SaveGame()
 		APGKCharacter* Character = Cast<APGKCharacter>(PC->GetPawn());
 		if (!Character) continue;
 
-		SaveData->PlayerData.Location = Character->GetActorLocation();
-		SaveData->PlayerData.Rotation = Character->GetActorRotation();
+		FPGKPlayerSaveData& PData = SaveData->AllPlayersData.AddDefaulted_GetRef();
+		PData.PlayerSaveID = GetPlayerSaveID(PC);
+		PData.Location     = Character->GetActorLocation();
+		PData.Rotation     = Character->GetActorRotation();
 
 		if (APGKPlayerState* PS = Character->GetPlayerState<APGKPlayerState>())
 		{
-			SaveData->PlayerData.WaterLevel  = PS->waterLevel;
-			SaveData->PlayerData.HealthLevel = PS->healthLevel;
-			SaveData->PlayerData.OxygenLevel = PS->oxygenLevel;
+			PData.WaterLevel  = PS->waterLevel;
+			PData.HealthLevel = PS->healthLevel;
+			PData.OxygenLevel = PS->oxygenLevel;
 		}
 
 		if (UPGKInventoryComponent* Inv = Character->GetInventoryComponent())
 		{
 			for (const FPGKInventorySlot& Slot : Inv->InventorySlots)
 			{
-				FPGKSavedInventorySlot& Saved = SaveData->PlayerData.Inventory.AddDefaulted_GetRef();
+				FPGKSavedInventorySlot& Saved = PData.Inventory.AddDefaulted_GetRef();
 				Saved.ItemData = TSoftObjectPtr<UPGKItemData>(Slot.ItemData);
 				Saved.Quantity = Slot.Quantity;
 			}
 		}
 
-		UE_LOG(LogTemp, Log, TEXT("Saved player: Location=%s, Inventory slots=%d"),
-			*SaveData->PlayerData.Location.ToString(), SaveData->PlayerData.Inventory.Num());
-		break; // single-player save
+		UE_LOG(LogTemp, Log, TEXT("Saved player '%s': Location=%s, Inventory=%d slots"),
+			*PData.PlayerSaveID, *PData.Location.ToString(), PData.Inventory.Num());
 	}
 
 	// --- Placed actors ---
@@ -164,7 +177,8 @@ void APGKGameMode::SaveGame()
 	}
 
 	UGameplayStatics::SaveGameToSlot(SaveData, UPGKSaveGame::SaveSlotName, UPGKSaveGame::SaveUserIndex);
-	UE_LOG(LogTemp, Log, TEXT("Game saved — placed actors: %d"), SaveData->PlacedActors.Num());
+	UE_LOG(LogTemp, Log, TEXT("Game saved — players: %d, placed actors: %d"),
+		SaveData->AllPlayersData.Num(), SaveData->PlacedActors.Num());
 }
 
 // ---------------------------------------------------------------------------
@@ -207,28 +221,72 @@ void APGKGameMode::LoadSavedGame()
 		IPGKSaveableInterface::Execute_ApplyActorSaveData(Spawned, ActorData);
 	}
 
-	// On a listen server PostLogin + RestartPlayer fire BEFORE BeginPlay, so the
-	// player pawn already exists by the time we get here. Try to apply immediately.
-	// On a dedicated server PostLogin comes later — fall back to the pending flag.
-	bool bApplied = false;
+	// Build per-player lookup map; entries are consumed as each player logs in.
+	LoadedPlayersData.Empty();
+	for (const FPGKPlayerSaveData& PData : SaveData->AllPlayersData)
+	{
+		FString Key = PData.PlayerSaveID.IsEmpty()
+			? FString::Printf(TEXT("__idx_%d"), LoadedPlayersData.Num())
+			: PData.PlayerSaveID;
+		LoadedPlayersData.Add(Key, PData);
+		UE_LOG(LogTemp, Log, TEXT("Load: found save entry for '%s'"), *Key);
+	}
+
+	// On a listen server the host pawn already exists at this point — apply immediately.
+	// Remote clients apply their data in PostLogin.
+	int32 PlayerIndex = 0;
 	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		APlayerController* PC = It->Get();
-		if (!PC || !PC->GetPawn()) continue;
+		if (!PC || !PC->GetPawn()) { ++PlayerIndex; continue; }
 
-		ApplyPlayerSaveData(PC, SaveData->PlayerData);
-		bApplied = true;
-		break;
+		FString SaveID = GetPlayerSaveID(PC);
+		UE_LOG(LogTemp, Log, TEXT("Load: host player ID = '%s'"), *SaveID);
+
+		FPGKPlayerSaveData* Found = LoadedPlayersData.Find(SaveID);
+
+		// Fallback: if no name match, pick the positionally matching entry
+		if (!Found)
+		{
+			FString IndexKey = FString::Printf(TEXT("__idx_%d"), PlayerIndex);
+			Found = LoadedPlayersData.Find(IndexKey);
+			if (Found) SaveID = IndexKey;
+		}
+
+		// Last resort for single-player: use whatever entry is left
+		if (!Found && LoadedPlayersData.Num() > 0)
+		{
+			auto MapIt = LoadedPlayersData.CreateIterator();
+			ApplyPlayerSaveData(PC, MapIt.Value());
+			MapIt.RemoveCurrent();
+			++PlayerIndex;
+			continue;
+		}
+
+		if (Found)
+		{
+			ApplyPlayerSaveData(PC, *Found);
+			LoadedPlayersData.Remove(SaveID);
+		}
+
+		++PlayerIndex;
 	}
 
-	if (!bApplied)
+	UE_LOG(LogTemp, Log, TEXT("Game loaded — placed actors: %d, players in save: %d"),
+		SaveData->PlacedActors.Num(), SaveData->AllPlayersData.Num());
+}
+
+FString APGKGameMode::GetPlayerSaveID(APlayerController* PC) const
+{
+	// Player names include a session-specific hex suffix in UE (e.g. WIN-ABCD-3F7E),
+	// so they change every launch. Use stable positional index instead.
+	int32 Index = 0;
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
-		PendingPlayerData     = SaveData->PlayerData;
-		bHasPendingPlayerLoad = true;
+		if (It->Get() == PC) break;
+		++Index;
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("Game loaded — placed actors: %d, player applied: %s"),
-		SaveData->PlacedActors.Num(), bApplied ? TEXT("immediate") : TEXT("pending"));
+	return FString::Printf(TEXT("Player_%d"), Index);
 }
 
 void APGKGameMode::ApplyPlayerSaveData(APlayerController* PC, const FPGKPlayerSaveData& Data)

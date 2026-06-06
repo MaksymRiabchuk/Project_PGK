@@ -28,6 +28,10 @@ struct FPGKPlayerSaveData
 {
 	GENERATED_BODY()
 
+	// Matches GetPlayerSaveID() — PlayerName or "Player_N" fallback.
+	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Save")
+	FString PlayerSaveID;
+
 	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Save")
 	FVector Location = FVector::ZeroVector;
 

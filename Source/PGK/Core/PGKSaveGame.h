@@ -15,8 +15,9 @@ class PGK_API UPGKSaveGame : public USaveGame
 public:
 	UPGKSaveGame();
 
+	// One entry per connected player, keyed by PlayerSaveID inside each struct.
 	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Save|Player")
-	FPGKPlayerSaveData PlayerData;
+	TArray<FPGKPlayerSaveData> AllPlayersData;
 
 	UPROPERTY(SaveGame, BlueprintReadWrite, Category = "Save|World")
 	FPGKWorldSaveData WorldData;

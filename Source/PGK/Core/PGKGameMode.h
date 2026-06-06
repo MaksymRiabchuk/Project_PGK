@@ -42,8 +42,11 @@ private:
 	void ApplyPlayerSaveData(APlayerController* PC, const FPGKPlayerSaveData& Data);
 	void SpawnWorldChests();
 
-	bool bHasPendingPlayerLoad = false;
-	FPGKPlayerSaveData PendingPlayerData;
+	// Returns PlayerName, or "Player_N" if name is empty. Used as the save key.
+	FString GetPlayerSaveID(APlayerController* PC) const;
+
+	// Populated during LoadSavedGame(); entries removed as each player applies their data.
+	TMap<FString, FPGKPlayerSaveData> LoadedPlayersData;
 };
 
 
