@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Core/Types/PGKSaveTypes.h"
+#include "Buildings/PGKChestLootTable.h"
 #include "PGKGameMode.generated.h"
+
+class APGKChest;
 
 /**
  *  Simple GameMode for a first person game
@@ -26,9 +29,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Save")
 	void SaveGame();
 
+	// Blueprint child (BP_GameMode) must set this to BP_Chest
+	UPROPERTY(EditDefaultsOnly, Category = "World Chests")
+	TSubclassOf<APGKChest> ChestClass;
+
+	// Fallback loot table used when a spawn point has no override
+	UPROPERTY(EditDefaultsOnly, Category = "World Chests")
+	UPGKChestLootTable* DefaultLootTable = nullptr;
+
 private:
 	void LoadSavedGame();
 	void ApplyPlayerSaveData(APlayerController* PC, const FPGKPlayerSaveData& Data);
+	void SpawnWorldChests();
 
 	bool bHasPendingPlayerLoad = false;
 	FPGKPlayerSaveData PendingPlayerData;

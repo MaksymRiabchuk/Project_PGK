@@ -10,17 +10,32 @@
 APGKChest::APGKChest()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	InventoryComponent = CreateDefaultSubobject<UPGKInventoryComponent>(TEXT("PGK_Inventory"));
 	InventoryComponent->SetIsReplicated(true);
 
 }
 
-// Called when the game starts or when spawned
 void APGKChest::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (HasAuthority() && InventoryComponent)
+	{
+		InventoryComponent->OnInventoryUpdated.AddDynamic(this, &APGKChest::CheckIfEmptyAndDestroy);
+	}
+}
+
+void APGKChest::CheckIfEmptyAndDestroy()
+{
+	if (!bDestroyWhenEmpty || !HasAuthority()) return;
+
+	for (const FPGKInventorySlot& Slot : InventoryComponent->InventorySlots)
+	{
+		if (Slot.ItemData) return;
+	}
+
+	Destroy();
 }
 
 // Called every frame

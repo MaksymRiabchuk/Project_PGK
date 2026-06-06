@@ -7,6 +7,7 @@
 #include "PGKSaveGame.h"
 #include "PGKTimeComponent.h"
 #include "Buildings/PGKChest.h"
+#include "Buildings/PGKChestSpawnPoint.h"
 #include "Character/PGKCharacter.h"
 #include "Character/PGKPlayerController.h"
 #include "Character/PGKPlayerState.h"
@@ -32,6 +33,31 @@ void APGKGameMode::BeginPlay()
 		GI->bShouldLoadSave = false;
 		LoadSavedGame();
 	}
+	else
+	{
+		SpawnWorldChests();
+	}
+}
+
+void APGKGameMode::SpawnWorldChests()
+{
+	if (!ChestClass || !DefaultLootTable) return;
+
+	APGKGameStateBase* GS = GetGameState<APGKGameStateBase>();
+	const float Progress = GS
+		? FMath::Clamp(float(1.0 - GS->GlobalCO2 / 99.2), 0.f, 1.f)
+		: 0.f;
+
+	int32 Spawned = 0;
+	for (TActorIterator<APGKChestSpawnPoint> It(GetWorld()); It; ++It)
+	{
+		if (It->TrySpawnChest(Progress, ChestClass, DefaultLootTable))
+		{
+			++Spawned;
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("World chests spawned: %d"), Spawned);
 }
 
 void APGKGameMode::PostLogin(APlayerController* NewPlayer)

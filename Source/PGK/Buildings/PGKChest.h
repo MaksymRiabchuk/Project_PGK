@@ -36,4 +36,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Components|Inventory")
 	FORCEINLINE class UPGKInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 
+	// Set to true on world-spawned chests so they disappear when emptied
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chest")
+	bool bDestroyWhenEmpty = false;
+
+private:
+	UFUNCTION()
+	void CheckIfEmptyAndDestroy();
 };
