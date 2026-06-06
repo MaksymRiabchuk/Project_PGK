@@ -20,9 +20,17 @@ void APGKChest::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority() && InventoryComponent)
+	if (HasAuthority())
 	{
-		InventoryComponent->OnInventoryUpdated.AddDynamic(this, &APGKChest::CheckIfEmptyAndDestroy);
+		if (bSaveActor && !ActorHasTag(FName("PlayerPlaced")))
+		{
+			Tags.Add(FName("PlayerPlaced"));
+		}
+
+		if (InventoryComponent)
+		{
+			InventoryComponent->OnInventoryUpdated.AddDynamic(this, &APGKChest::CheckIfEmptyAndDestroy);
+		}
 	}
 }
 
@@ -86,12 +94,10 @@ void APGKChest::ApplyActorSaveData_Implementation(const FPGKActorSaveData& SaveD
 
 void APGKChest::Interact_Implementation(APGKCharacter* InteractorCharacter)
 {
-	if (InteractorCharacter)
-	{
-		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
-		if (PC)
-		{
-			Client_OpenMachineUI_Implementation(PC);			
-		}
-	}
+	if (!InteractorCharacter) return;
+	APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
+	if (!PC) return;
+
+	SetOwner(PC);
+	Client_OpenMachineUI(PC);
 }

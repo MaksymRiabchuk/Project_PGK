@@ -40,6 +40,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chest")
 	bool bDestroyWhenEmpty = false;
 
+	// Enable for editor-placed chests that should be saved/loaded (adds "PlayerPlaced" tag at runtime)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chest")
+	bool bSaveActor = false;
+
 private:
 	UFUNCTION()
 	void CheckIfEmptyAndDestroy();

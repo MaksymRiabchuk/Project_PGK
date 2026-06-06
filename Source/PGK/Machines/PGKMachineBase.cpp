@@ -20,6 +20,7 @@ void APGKMachineBase::Interact_Implementation(APGKCharacter* InteractorCharacter
 
 	if (APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController()))
 	{
+		SetOwner(PC);  // Required so the Client RPC routes to this player's connection
 		Client_OpenMachineUI(PC);
 	}
 }
