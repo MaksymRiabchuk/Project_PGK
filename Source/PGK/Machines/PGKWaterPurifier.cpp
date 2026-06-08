@@ -20,13 +20,19 @@ void APGKWaterPurifier::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority() && WaterBottleItem)
+	if (HasAuthority() && WaterBottleItem && SideProductItem)
 	{
 		GetWorldTimerManager().SetTimer(
 			ProductionTimerHandle,
 			this,
 			&APGKWaterPurifier::ProduceWater,
 			ProductionInterval,
+			true);
+		GetWorldTimerManager().SetTimer(
+			SideProductionTimerHandle,
+			this,
+			&APGKWaterPurifier::ProduceSideProduct,
+			SideProductionInterval,
 			true);
 	}
 }
@@ -37,6 +43,15 @@ void APGKWaterPurifier::ProduceWater()
 	{
 		InventoryComponent->Server_AddItem(WaterBottleItem, 1);
 		UE_LOG(LogTemp, Warning, TEXT("Water Bottle Produced!"));
+	}
+}
+
+void APGKWaterPurifier::ProduceSideProduct()
+{
+	if (SideProductItem && InventoryComponent)
+	{
+		InventoryComponent->Server_AddItem(SideProductItem, 1);
+		UE_LOG(LogTemp, Warning, TEXT("Side Product Produced!"));
 	}
 }
 

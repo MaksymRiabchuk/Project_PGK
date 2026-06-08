@@ -25,21 +25,29 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Components|Inventory")
 	FORCEINLINE class UPGKInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
-
-	// Set this to the water bottle DataAsset in BP_WaterPurifier
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Production")
 	class UPGKItemData* WaterBottleItem;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Production")
+	class UPGKItemData* SideProductItem;
 
 	// How often (seconds) one water bottle is produced
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Production")
 	float ProductionInterval = 7.f;
+	
+	// How often (seconds) one side product is produced
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Production")
+	float SideProductionInterval = 14.f;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	FTimerHandle ProductionTimerHandle;
+	FTimerHandle SideProductionTimerHandle;
 
 	UFUNCTION()
 	void ProduceWater();
+	void ProduceSideProduct();
 };
