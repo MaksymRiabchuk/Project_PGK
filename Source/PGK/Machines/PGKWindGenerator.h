@@ -18,7 +18,6 @@ public:
 	APGKWindGenerator();
 
 	virtual FText GetInteractText_Implementation() override;
-	virtual void Interact_Implementation(class APGKCharacter* InteractorCharacter) override;
 
 protected:
 	// Called when the game starts or when spawned

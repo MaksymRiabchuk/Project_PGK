@@ -30,14 +30,3 @@ FText APGKWaterStorage::GetInteractText_Implementation()
 	return FText::FromString(TEXT("Press E to open Water Storage"));
 }
 
-void APGKWaterStorage::Interact_Implementation(APGKCharacter* InteractorCharacter)
-{
-	if (InteractorCharacter)
-	{
-		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
-		if (PC)
-		{
-			Client_OpenMachineUI_Implementation(PC);			
-		}
-	}
-}

@@ -60,15 +60,6 @@ FText APGKWaterPurifier::GetInteractText_Implementation()
 	return FText::FromString(TEXT("Press E to open Water Purifier"));
 }
 
-void APGKWaterPurifier::Interact_Implementation(APGKCharacter* InteractorCharacter)
-{
-	if (!InteractorCharacter) return;
-
-	if (APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController()))
-	{
-		Client_OpenMachineUI(PC);
-	}
-}
 
 FPGKActorSaveData APGKWaterPurifier::GetActorSaveData_Implementation()
 {

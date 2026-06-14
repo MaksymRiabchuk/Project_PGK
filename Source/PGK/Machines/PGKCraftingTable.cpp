@@ -13,17 +13,6 @@ APGKCraftingTable::APGKCraftingTable()
 }
 
 
-void APGKCraftingTable::Interact_Implementation(APGKCharacter* InteractorCharacter)
-{
-	if (InteractorCharacter)
-	{
-		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
-		if (PC)
-		{
-			Client_OpenMachineUI(PC);			
-		}
-	}
-}
 
 void APGKCraftingTable::BeginPlay()
 {

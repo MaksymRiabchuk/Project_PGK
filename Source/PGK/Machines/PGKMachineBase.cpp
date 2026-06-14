@@ -3,7 +3,6 @@
 
 #include "Machines/PGKMachineBase.h"
 #include "Character/PGKCharacter.h"
-#include "Core/Inventory/PGKInventoryComponent.h"
 #include "Widgets/PGKMachineUserWidget.h"
 
 APGKMachineBase::APGKMachineBase()
@@ -15,8 +14,6 @@ APGKMachineBase::APGKMachineBase()
 void APGKMachineBase::Interact_Implementation(APGKCharacter* InteractorCharacter)
 {
 	if (!InteractorCharacter) return;
-
-	UPGKInventoryComponent* MyInventory = FindComponentByClass<UPGKInventoryComponent>();
 
 	if (APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController()))
 	{

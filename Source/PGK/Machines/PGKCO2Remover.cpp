@@ -43,17 +43,6 @@ FText APGKCO2Remover::GetInteractText_Implementation()
 	return FText::FromString(TEXT("Press E to open"));
 }
 
-void APGKCO2Remover::Interact_Implementation(APGKCharacter* InteractorCharacter)
-{
-	if (InteractorCharacter)
-	{
-		APGKPlayerController* PC = Cast<APGKPlayerController>(InteractorCharacter->GetController());
-		if (PC)
-		{
-			Client_OpenMachineUI(PC);			
-		}
-	}
-}
 
 void APGKCO2Remover::RemoveCO2Tick()
 {
