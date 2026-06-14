@@ -25,7 +25,7 @@ protected:
 	class UBoxComponent* UnderwaterVolume;
 
 	UPROPERTY(EditAnywhere, Category = "Water Settings")
-	float DecreaseRate = -1.0f;
+	float DecreaseRate = -0.01f;
 
 	FTimerHandle WaterTimerHandle;
 	void DecreaseWaterLevel();
