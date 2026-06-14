@@ -5,6 +5,7 @@
 #include "Components/PostProcessComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 APGKGlobalWater::APGKGlobalWater()
 {
@@ -68,7 +69,15 @@ void APGKGlobalWater::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, A
 		if (OverlappedCharacter->IsLocallyControlled())
 		{
 			UnderwaterPostProcess->BlendWeight = 1.0f;
-			LocalPlayerInWater = OverlappedCharacter; 
+			LocalPlayerInWater = OverlappedCharacter;
+
+			if (UCharacterMovementComponent* CMC = OverlappedCharacter->GetCharacterMovement())
+			{
+				DefaultGravityScale = CMC->GravityScale;
+				DefaultJumpZVelocity = CMC->JumpZVelocity;
+				CMC->GravityScale = UnderwaterGravityScale;
+				CMC->JumpZVelocity = UnderwaterJumpZVelocity;
+			}
 		}
 		if (HasAuthority())
 		{
@@ -88,6 +97,12 @@ void APGKGlobalWater::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AAc
 		{
 			UnderwaterPostProcess->BlendWeight = 0.0f;
 			LocalPlayerInWater = nullptr;
+
+			if (UCharacterMovementComponent* CMC = OverlappedCharacter->GetCharacterMovement())
+			{
+				CMC->GravityScale = DefaultGravityScale;
+				CMC->JumpZVelocity = DefaultJumpZVelocity;
+			}
 		}
 	}
 }

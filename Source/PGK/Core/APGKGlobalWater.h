@@ -30,16 +30,25 @@ protected:
 	FTimerHandle WaterTimerHandle;
 	void DecreaseWaterLevel();
 
+	UPROPERTY(EditAnywhere, Category = "Water Settings|Underwater Movement")
+	float UnderwaterGravityScale = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Water Settings|Underwater Movement")
+	float UnderwaterJumpZVelocity = 0.0f;
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
-	
+
 private:
 	UPROPERTY()
 	ACharacter* LocalPlayerInWater = nullptr;
+
+	float DefaultGravityScale = 1.0f;
+	float DefaultJumpZVelocity = 420.0f;
 };
