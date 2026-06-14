@@ -47,4 +47,6 @@ public:
 private:
 	UFUNCTION()
 	void CheckIfEmptyAndDestroy();
+
+	FTimerHandle PendingDestroyTimer;
 };

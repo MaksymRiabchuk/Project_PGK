@@ -19,5 +19,13 @@ public:
 	APGKMachineBase* OwningMachine;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Machine")
-	void OnMachineInitialized();	
+	void OnMachineInitialized();
+
+protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
+
+private:
+	UFUNCTION()
+	void OnOwningMachineDestroyed(AActor* DestroyedActor);
 };

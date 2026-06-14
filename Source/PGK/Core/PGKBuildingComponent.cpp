@@ -155,3 +155,20 @@ void UPGKBuildingComponent::RotateHologram(float Direction)
         CurrentHologramYaw += 360.0f;
     }
 }
+
+bool UPGKBuildingComponent::HasRequiredItemsToBuild(UPGKBuildingData* BuildingData)
+{
+    if (!BuildingData || !BuildingData->ConstructedClass) return false;
+    APGKCharacter* Character = Cast<APGKCharacter>(GetOwner());
+    if (!Character) return false;
+    
+    UPGKInventoryComponent* Inventory = Character->GetInventoryComponent();
+    if (!Inventory) return false;
+    
+    if (!Inventory->HasRequiredItems(BuildingData->Recipe))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Server: Player %s tried to build without resources!"), *Character->GetName());
+        return false; 
+    }
+    return true;
+}

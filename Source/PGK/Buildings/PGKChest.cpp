@@ -43,7 +43,7 @@ void APGKChest::CheckIfEmptyAndDestroy()
 		if (Slot.ItemData) return;
 	}
 
-	Destroy();
+	GetWorldTimerManager().SetTimer(PendingDestroyTimer, [this]() { Destroy(); }, 0.3f, false);
 }
 
 // Called every frame

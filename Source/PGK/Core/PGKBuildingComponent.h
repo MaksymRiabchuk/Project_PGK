@@ -42,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Building")
 	void RotateHologram(float Direction);
+
+	UFUNCTION(BlueprintCallable, Category = "Building")
+	bool HasRequiredItemsToBuild(UPGKBuildingData* BuildingData);
 private:
 	UPROPERTY()
 	UPGKBuildingData* CurrentBuildingData;
