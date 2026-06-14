@@ -26,7 +26,7 @@ void UMainGameInstance::HostGame()
 {
 	UGameplayStatics::OpenLevel(
 		GetWorld(),
-		"Lvl_Default",
+		"L_NewMap",
 		true,
 		"listen"
 	);

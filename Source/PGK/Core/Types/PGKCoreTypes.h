@@ -18,7 +18,7 @@ struct FGameDateTime
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-	int32 Year = 2026;
+	int32 Year = 2046;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	int32 Month = 1;
@@ -27,7 +27,7 @@ struct FGameDateTime
 	int32 Day = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-	float TimeOfDay = 0.0f;
+	float TimeOfDay = 7.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Time")
 	EGameSeason Season = EGameSeason::Winter;
