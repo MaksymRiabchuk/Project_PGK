@@ -49,6 +49,10 @@ void APGKResourceSpawner::SpawnResources()
         FHitResult HitResult;
         FCollisionQueryParams QueryParams;
         QueryParams.AddIgnoredActor(this);
+        for (AActor* Ignored : IgnoredActors)
+        {
+            if (Ignored) QueryParams.AddIgnoredActor(Ignored);
+        }
 
         bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, QueryParams);
 

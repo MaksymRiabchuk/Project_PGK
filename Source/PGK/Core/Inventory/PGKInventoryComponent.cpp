@@ -83,14 +83,7 @@ void UPGKInventoryComponent::Server_ConsumeItem_Implementation(UPGKConsumableIte
         ItemToConsume->UseItem(OwnerCharacter);
     }
 
-    if (GetOwner()->HasAuthority())
-    {
-        APawn* OwnerPawn = Cast<APawn>(GetOwner());
-        if (!OwnerPawn || OwnerPawn->IsLocallyControlled())
-        {
-            RequestInventoryUpdate();
-        }
-    }
+    RequestInventoryUpdate();
     CheckOverweightDebuff();
 }
 
@@ -143,14 +136,7 @@ void UPGKInventoryComponent::Server_AddItem_Implementation(UPGKItemData* ItemToA
         UE_LOG(LogTemp, Warning, TEXT("InventoryFull! %d items were not equipped."), RemainingAmount);
     }
     
-    if (GetOwner()->HasAuthority())
-    {
-        APawn* OwnerPawn = Cast<APawn>(GetOwner());
-        if (!OwnerPawn || OwnerPawn->IsLocallyControlled())
-        {
-            RequestInventoryUpdate();
-        }
-    }
+    RequestInventoryUpdate();
     CheckOverweightDebuff();
 }
 
@@ -171,10 +157,7 @@ void UPGKInventoryComponent::Server_RemoveItemFromSlot_Implementation(int32 Slot
         InventorySlots[SlotIndex].Quantity = 0;
     }
 
-    if (GetOwner()->HasAuthority() && Cast<APawn>(GetOwner())->IsLocallyControlled())
-    {
-        RequestInventoryUpdate();
-    }   
+    RequestInventoryUpdate();
     CheckOverweightDebuff();
 }
 
@@ -262,15 +245,8 @@ void UPGKInventoryComponent::ConsumeRequiredItems(const TArray<FPGKItemAmount>& 
             }
         }
     }
-    if (GetOwner()->HasAuthority())
-    {
-        APawn* OwnerPawn = Cast<APawn>(GetOwner());
-        if (!OwnerPawn || OwnerPawn->IsLocallyControlled())
-        {
-            RequestInventoryUpdate();
-        }
-    }
-    CheckOverweightDebuff(); 
+    RequestInventoryUpdate();
+    CheckOverweightDebuff();
 }
 
 void UPGKInventoryComponent::OnRep_InventorySlots()

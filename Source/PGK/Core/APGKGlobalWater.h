@@ -31,10 +31,10 @@ protected:
 	void DecreaseWaterLevel();
 
 	UPROPERTY(EditAnywhere, Category = "Water Settings|Underwater Movement")
-	float UnderwaterGravityScale = 3.0f;
+	float UnderwaterGravityScale = 2.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Water Settings|Underwater Movement")
-	float UnderwaterJumpZVelocity = 0.0f;
+	float UnderwaterJumpZVelocity = 250.0f;
 
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
